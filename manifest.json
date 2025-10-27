@@ -1,10 +1,11 @@
 {
   "manifest_version": 3,
   "name": "Vocabumin",
+  "update_url": "https://vocabumin.aminophen.ir/extension/updates.xml",
   "version": "0.1.0",
   "description": "Transform YouTube learning with word-perfect subtitles that sync naturally with speech. Perfect for language learners.",
   "author": "Aminophen",
-  "homepage_url": "https://github.com/Aminophen98/YTS-1",
+  "homepage_url": "https://github.com/Aminophen98/Vocabumin",
 
   "permissions": [
     "activeTab",
