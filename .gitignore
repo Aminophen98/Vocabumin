@@ -1,0 +1,54 @@
+# Chrome Extension Development
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules/
+jspm_packages/
+
+# Build outputs (if any)
+dist/
+build/
+*.zip
+*.crx
+*.pem
+
+# Testing
+coverage/
+.nyc_output/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS Files
+Thumbs.db
+Desktop.ini
+
+# History and caches
+.history/
+.cache/
+
+# AI Assistant Files
+.serena/
+.claude/
+
+# Temporary files
+tmp/
+temp/
+*.tmp

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YourVocab Extension</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 360px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f9fafb;
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-dot.disconnected {
+            background: #ef4444;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Usage Section */
+        .usage-section {
+            padding: 16px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .usage-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #374151;
+        }
+
+        .usage-item {
+            margin-bottom: 12px;
+        }
+
+        .usage-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .usage-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .usage-bar {
+            height: 20px;
+            background: #f3f4f6;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .usage-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 6px;
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .usage-fill.warning {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+
+        .usage-fill.danger {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 16px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Action Buttons */
+        .actions {
+            padding: 16px;
+            background: white;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* Recent Videos Section */
+        .recent-videos-section {
+            padding: 16px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .section-header {
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .recent-videos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .recent-video-item {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .recent-video-item:hover {
+            background: #f9fafb;
+            border-color: #667eea;
+        }
+
+        .recent-video-thumbnail {
+            width: 60px;
+            height: 34px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: #f3f4f6;
+            flex-shrink: 0;
+        }
+
+        .recent-video-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .recent-video-title {
+            font-size: 12px;
+            font-weight: 500;
+            color: #111827;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-bottom: 2px;
+        }
+
+        .recent-video-meta {
+            font-size: 10px;
+            color: #6b7280;
+            display: flex;
+            gap: 8px;
+        }
+
+        .view-all-link {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .view-all-link a {
+            font-size: 12px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .view-all-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 12px 16px;
+            background: #f9fafb;
+            text-align: center;
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>
+            <span>📚</span>
+            YourVocab
+        </h1>
+        <div class="connection-status" id="connectionStatus">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Connected</span>
+        </div>
+    </div>
+
+    <!-- Usage Limits -->
+    <div class="usage-section">
+        <div class="usage-title">Subtitle Fetch Limits</div>
+        
+        <div class="usage-item">
+            <div class="usage-label">
+                <span>⚡ Next 5 minutes</span>
+                <span id="subtitleCount">0/2</span>
+            </div>
+            <div class="usage-bar">
+                <div class="usage-fill" id="subtitleBar" style="width: 0%">
+                    <span id="subtitlePercent">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="usage-item">
+            <div class="usage-label">
+                <span>⏱️ This hour</span>
+                <span id="wordCount">0/5</span>
+            </div>
+            <div class="usage-bar">
+                <div class="usage-fill" id="wordBar" style="width: 0%">
+                    <span id="wordPercent">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="usage-item">
+            <div class="usage-label">
+                <span>📅 Today</span>
+                <span id="dailyCount">0/20</span>
+            </div>
+            <div class="usage-bar">
+                <div class="usage-fill" id="dailyBar" style="width: 0%">
+                    <span id="dailyPercent">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Word Lookups -->
+    <div class="usage-section" style="border-top: 1px solid #e5e7eb;">
+        <div class="usage-title">AI Word Lookups (OpenAI)</div>
+        
+        <div class="usage-item">
+            <div class="usage-label">
+                <span>🤖 Today's Lookups</span>
+                <span id="apiCount">0/50</span>
+            </div>
+            <div class="usage-bar">
+                <div class="usage-fill" id="apiBar" style="width: 0%">
+                    <span id="apiPercent">0%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="apiModeInfo" style="
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 8px;
+            padding: 8px;
+            background: #f9fafb;
+            border-radius: 6px;
+            display: none;
+        ">
+            <span id="apiModeText"></span>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalWords">0</div>
+                <div class="stat-label">Words Saved</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="todayWords">0</div>
+                <div class="stat-label">Today</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Videos -->
+    <div class="recent-videos-section" id="recentVideosSection" style="display: none;">
+        <div class="section-header">
+            <div class="section-title">📺 Recent Videos</div>
+        </div>
+        <div id="recentVideosList" class="recent-videos-list"></div>
+        <div class="view-all-link">
+            <a href="#" id="viewAllVideos">View All Videos →</a>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="actions">
+        <button class="btn btn-primary" id="dashboardBtn">
+            <span>📊</span>
+            Dashboard
+        </button>
+        <button class="btn btn-secondary" id="settingsBtn">
+            <span>⚙️</span>
+            Settings
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        v1.0.0 | <a href="#" id="helpLink">Help</a> | <a href="#" id="refreshBtn">Refresh</a>
+    </div>
+
+    <script src="popup-simple.js"></script>
+</body>
+</html>

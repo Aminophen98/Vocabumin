@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YourVocab Extension Settings</title>
+    <style>
+      :root {
+        --primary-color: #3b82f6;
+        --primary-hover: #2563eb;
+        --success-color: #10b981;
+        --danger-color: #ef4444;
+        --warning-color: #f59e0b;
+        --background: #f9fafb;
+        --card-bg: #ffffff;
+        --text-primary: #111827;
+        --text-secondary: #6b7280;
+        --border-color: #e5e7eb;
+        --radius: 8px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: var(--background);
+        color: var(--text-primary);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      /* Header */
+      .header {
+        background: var(--card-bg);
+        border-radius: var(--radius);
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .header h1 {
+        font-size: 24px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .header .subtitle {
+        color: var(--text-secondary);
+        font-size: 14px;
+        margin-top: 4px;
+      }
+
+      /* Settings Sections */
+      .settings-section {
+        background: var(--card-bg);
+        border-radius: var(--radius);
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .section-icon {
+        width: 20px;
+        height: 20px;
+        opacity: 0.7;
+      }
+
+      /* Form Elements */
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group:last-child {
+        margin-bottom: 0;
+      }
+
+      label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+      }
+
+      .form-help {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-top: 4px;
+      }
+
+      input[type="text"],
+      input[type="password"],
+      select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+      }
+
+      input[type="text"]:focus,
+      input[type="password"]:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      /* Radio Group */
+      .radio-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .radio-option {
+        display: flex;
+        align-items: flex-start;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .radio-option:hover {
+        background: var(--background);
+      }
+
+      .radio-option.selected {
+        border-color: var(--primary-color);
+        background: rgba(59, 130, 246, 0.05);
+      }
+
+      .radio-option input[type="radio"] {
+        margin-right: 12px;
+        margin-top: 2px;
+      }
+
+      .radio-content {
+        flex: 1;
+      }
+
+      .radio-title {
+        font-weight: 500;
+        margin-bottom: 2px;
+      }
+
+      .radio-description {
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+
+      /* Buttons */
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .btn-primary {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+      }
+
+      .btn-danger {
+        background: var(--danger-color);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #dc2626;
+      }
+
+      .btn-secondary {
+        background: var(--border-color);
+        color: var(--text-primary);
+      }
+
+      .btn-secondary:hover {
+        background: #d1d5db;
+      }
+
+      /* Cache Stats */
+      .cache-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .stat-card {
+        padding: 12px;
+        background: var(--background);
+        border-radius: 6px;
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-top: 4px;
+      }
+
+      /* Alert Messages */
+      .alert {
+        padding: 12px 16px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        display: none;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .alert.show {
+        display: flex;
+      }
+
+      .alert-success {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success-color);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+      }
+
+      .alert-error {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger-color);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
+
+      .alert-info {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--primary-color);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+      }
+
+      /* Action Buttons Row */
+      .button-group {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      /* Loading Spinner */
+      .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 0.6s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        padding: 20px;
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+
+      .footer a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
+      }
+
+      /* Tab Navigation */
+      .tab-navigation {
+        background: var(--card-bg);
+        border-radius: var(--radius);
+        padding: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .tab-btn {
+        flex: 1;
+        padding: 10px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background: transparent;
+        color: var(--text-secondary);
+      }
+
+      .tab-btn:hover {
+        background: var(--background);
+        color: var(--text-primary);
+      }
+
+      .tab-btn.active {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .tab-content {
+        position: relative;
+      }
+
+      .tab-panel {
+        display: none;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .tab-panel.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Videos List */
+      .videos-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .video-item {
+        padding: 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+
+      .video-item:hover {
+        background: var(--background);
+        border-color: var(--primary-color);
+      }
+
+      .video-header {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      .video-thumbnail {
+        width: 120px;
+        height: 68px;
+        border-radius: 4px;
+        object-fit: cover;
+        background: var(--border-color);
+      }
+
+      .video-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .video-title {
+        font-weight: 500;
+        font-size: 14px;
+        margin-bottom: 4px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      .video-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+
+      .video-stat {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        .container {
+          padding: 12px;
+        }
+
+        .settings-section {
+          padding: 16px;
+        }
+
+        .cache-stats {
+          grid-template-columns: 1fr;
+        }
+
+        .video-header {
+          flex-direction: column;
+        }
+
+        .video-thumbnail {
+          width: 100%;
+          height: auto;
+          aspect-ratio: 16/9;
+        }
+
+        .tab-navigation {
+          padding: 6px;
+        }
+
+        .tab-btn {
+          font-size: 13px;
+          padding: 8px 12px;
+        }
+
+        .tab-btn span {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>
+          <span>⚙️</span>
+          YourVocab Extension Settings
+        </h1>
+        <div class="subtitle">
+          Configure your vocabulary learning experience
+        </div>
+      </div>
+
+      <!-- Alert Message -->
+      <div id="alertMessage" class="alert">
+        <span id="alertIcon">✓</span>
+        <span id="alertText">Settings saved successfully!</span>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tab-navigation">
+        <button class="tab-btn active" data-tab="settings">
+          <span>⚙️</span>
+          Settings
+        </button>
+        <button class="tab-btn" data-tab="videos">
+          <span>🎬</span>
+          My Videos
+        </button>
+      </div>
+
+      <!-- Tab Panels -->
+      <div class="tab-content">
+        <!-- Settings Tab -->
+        <div class="tab-panel active" id="settingsTab">
+          <!-- API Configuration Section -->
+          <div class="settings-section">
+            <h2 class="section-title">
+              <span class="section-icon">🔑</span>
+              API Configuration
+            </h2>
+
+            <div class="form-group">
+              <label>API Mode</label>
+              <div class="radio-group">
+                <div class="radio-option" data-value="own">
+                  <input
+                    type="radio"
+                    name="apiMode"
+                    value="own"
+                    id="apiModeOwn"
+                  />
+                  <div class="radio-content">
+                    <div class="radio-title">Use Your Own API Key</div>
+                    <div class="radio-description">
+                      Unlimited lookups with your OpenAI API key
+                    </div>
+                  </div>
+                </div>
+                <div class="radio-option" data-value="public">
+                  <input
+                    type="radio"
+                    name="apiMode"
+                    value="public"
+                    id="apiModePublic"
+                  />
+                  <div class="radio-content">
+                    <div class="radio-title">Use Public API</div>
+                    <div class="radio-description">
+                      Limited to 30 lookups per day
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" id="apiKeyGroup">
+              <label for="apiKey">OpenAI API Key</label>
+              <input type="password" id="apiKey" placeholder="sk-..." />
+              <div class="form-help">
+                Your API key is stored locally and never sent to our servers
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="targetLanguage">Target Language</label>
+              <select id="targetLanguage">
+                <option value="ja">Japanese</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="ko">Korean</option>
+                <option value="zh">Chinese</option>
+                <option value="ar">Arabic</option>
+                <option value="hi">Hindi</option>
+                <option value="pt">Portuguese</option>
+                <option value="ru">Russian</option>
+                <option value="fa">Persian</option>
+              </select>
+              <div class="form-help">Language for word translations</div>
+            </div>
+
+            <div class="form-group">
+              <label for="definitionLevel">Definition Level</label>
+              <select id="definitionLevel">
+                <option value="beginner">Beginner - Simple explanations</option>
+                <option value="intermediate">
+                  Intermediate - Standard definitions
+                </option>
+                <option value="advanced">
+                  Advanced - Detailed explanations
+                </option>
+              </select>
+              <div class="form-help">Complexity of word definitions</div>
+            </div>
+          </div>
+
+          <!-- Subtitle Server Section -->
+          <div class="settings-section">
+            <h2 class="section-title">
+              <span class="section-icon">🚂</span>
+              Subtitle Server
+            </h2>
+
+            <div class="form-group">
+              <label>Preferred Server</label>
+              <div class="radio-group">
+                <div class="radio-option" data-value="cloud">
+                  <input
+                    type="radio"
+                    name="subtitleServer"
+                    value="cloud"
+                    id="subtitleServerCloud"
+                  />
+                  <div class="radio-content">
+                    <div class="radio-title">🚂 Cloud Server (Recommended)</div>
+                    <div class="radio-description">
+                      Fast Vocabumin API, no setup required, works everywhere
+                    </div>
+                  </div>
+                </div>
+                <div class="radio-option" data-value="local">
+                  <input
+                    type="radio"
+                    name="subtitleServer"
+                    value="local"
+                    id="subtitleServerLocal"
+                  />
+                  <div class="radio-content">
+                    <div class="radio-title">💻 Local Server</div>
+                    <div class="radio-description">
+                      Uses your local yt-dlp server (must be running on port
+                      5000)
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-help">
+              💡 Cloud server is faster and requires no setup. Local server
+              gives you full control but requires running the yt-dlp server on
+              your machine.
+            </div>
+          </div>
+
+          <!-- Cache Management Section -->
+          <div class="settings-section">
+            <h2 class="section-title">
+              <span class="section-icon">💾</span>
+              Cache Management
+            </h2>
+
+            <div class="cache-stats">
+              <div class="stat-card">
+                <div class="stat-value" id="cacheVideoCount">0</div>
+                <div class="stat-label">Cached Videos</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="cacheSize">0 KB</div>
+                <div class="stat-label">Cache Size</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="savedWords">0</div>
+                <div class="stat-label">Saved Words</div>
+              </div>
+            </div>
+
+            <div class="button-group">
+              <button class="btn btn-danger" id="clearCacheBtn">
+                <span>🗑️</span>
+                Clear Subtitle Cache
+              </button>
+              <button class="btn btn-secondary" id="clearWordsBtn">
+                <span>📝</span>
+                Clear Saved Words
+              </button>
+              <button class="btn btn-secondary" id="exportDataBtn">
+                <span>📥</span>
+                Export Data
+              </button>
+            </div>
+
+            <div class="form-help" style="margin-top: 12px">
+              Subtitle cache helps videos load faster. Clearing it will not
+              delete your saved words.
+            </div>
+          </div>
+
+          <!-- Advanced Settings Section -->
+          <div class="settings-section">
+            <h2 class="section-title">
+              <span class="section-icon">🔧</span>
+              Advanced Settings
+            </h2>
+
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="debugMode" />
+                Enable Debug Mode
+              </label>
+              <div class="form-help">Show detailed logs in browser console</div>
+            </div>
+
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="autoCache" />
+                Auto-cache Subtitles
+              </label>
+              <div class="form-help">
+                Automatically cache subtitles when visiting YouTube videos
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="cacheExpiry">Cache Expiry</label>
+              <select id="cacheExpiry">
+                <option value="1">1 Day</option>
+                <option value="7" selected>7 Days</option>
+                <option value="30">30 Days</option>
+                <option value="0">Never</option>
+              </select>
+              <div class="form-help">How long to keep cached subtitles</div>
+            </div>
+          </div>
+        </div>
+        <!-- End Settings Tab -->
+
+        <!-- My Videos Tab -->
+        <div class="tab-panel" id="videosTab">
+          <div class="settings-section">
+            <h2 class="section-title">
+              <span class="section-icon">🎬</span>
+              My Videos
+            </h2>
+
+            <div class="form-help" style="margin-bottom: 16px">
+              Videos you've watched with subtitles, sorted by most recent
+            </div>
+
+            <div
+              id="videosLoading"
+              style="text-align: center; padding: 20px; display: none"
+            >
+              <div
+                class="spinner"
+                style="border-color: #e5e7eb; border-top-color: #3b82f6"
+              ></div>
+              <div
+                style="
+                  margin-top: 8px;
+                  color: var(--text-secondary);
+                  font-size: 14px;
+                "
+              >
+                Loading videos...
+              </div>
+            </div>
+
+            <div
+              id="videosError"
+              class="alert alert-error"
+              style="display: none"
+            >
+              <span>⚠️</span>
+              <span id="videosErrorText"
+                >Not connected to YourVocab. Please connect first.</span
+              >
+            </div>
+
+            <div
+              id="videosEmpty"
+              style="
+                text-align: center;
+                padding: 40px;
+                color: var(--text-secondary);
+                display: none;
+              "
+            >
+              <div style="font-size: 48px; margin-bottom: 12px">📺</div>
+              <div
+                style="font-size: 16px; font-weight: 500; margin-bottom: 4px"
+              >
+                No videos yet
+              </div>
+              <div style="font-size: 14px">
+                Start watching YouTube with subtitles to see them here
+              </div>
+            </div>
+
+            <div id="videosList" class="videos-list"></div>
+          </div>
+        </div>
+        <!-- End My Videos Tab -->
+      </div>
+      <!-- End Tab Content -->
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>
+          YourVocab Extension v1.0.0 |
+          <a href="#" id="backToPopup">Back to Extension</a> |
+          <a href="https://yourvocab.vercel.app" target="_blank"
+            >Open Dashboard</a
+          >
+        </p>
+      </div>
+    </div>
+
+    <script src="settings.js"></script>
+  </body>
+</html>

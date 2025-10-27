@@ -1,0 +1,71 @@
+{
+  "manifest_version": 3,
+  "name": "Vocabumin",
+  "version": "0.1.0",
+  "description": "Transform YouTube learning with word-perfect subtitles that sync naturally with speech. Perfect for language learners.",
+  "author": "Aminophen",
+  "homepage_url": "https://github.com/Aminophen98/YTS-1",
+
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "nativeMessaging"
+  ],
+
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://yourvocab.vercel.app/*",
+    "https://api.vocabumin.aminophen.ir/*",
+    "http://localhost:5000/*",
+    "http://localhost:3000/*"
+  ],
+  
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["https://*.youtube.com/*"],
+      "js": [
+        "content/core/Logger.js",
+        "content/core/EventBus.js",
+        "content/core/StateManager.js",
+        "content/services/server-connection.js",
+        "content/services/StorageService.js",
+        "content/services/SubtitleManager.js",
+        "content/youtube/DOMWatcher.js",
+        "content/youtube/VideoObserver.js",
+        "content/ui/OverlayUI.js",
+        "content/services/CaptionService.js",
+        "content/ui/WordTooltip.js",
+        "content/services/APIService.js",
+        "content/content-script.js"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://yourvocab.vercel.app/*",
+        "http://localhost:3000/*"
+      ],
+      "js": ["js/auth-bridge.js"]
+    }
+  ],
+  
+  "action": {
+    "default_popup": "popup/popup-simple.html",
+    "default_title": "Vocabumin"
+  },
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
