@@ -1,13 +1,14 @@
 class Caption {
-    constructor(state, serverManager, logger) {
+    constructor(state, serverManager, logger, notifications) {
         this.state = state;
         this.logger = logger || console;
         this.serverManager = serverManager;
+        this.notifications = notifications; // Unified notification service
         this.storage = new StorageManagement();
         this.storage.state = state;
-        
+
         // Initialize SubtitleManager for caching and rate limiting
-        this.subtitleManager = new SubtitleManager(logger, this.storage);
+        this.subtitleManager = new SubtitleManager(logger, this.storage, notifications);
     }
 
     // Helper to try multiple language variants
@@ -57,22 +58,32 @@ class Caption {
         if (result.error) {
             this.logger.error(`[Caption] Error: ${result.error}`);
 
-            // Show error to user
+            // Determine error type and show appropriate message
+            let errorType = 'unknown_error';
+            let errorDetails = {};
+
             if (result.limit_reached) {
-                this.showErrorOverlay('⏰ Daily subtitle limit reached. Try again tomorrow.', 'limit');
+                errorType = 'daily_limit';
             } else if (result.wait_time) {
-                const minutes = Math.ceil(result.wait_time / 60);
-                this.showErrorOverlay(`⏰ Rate limited. Please wait ${minutes} minutes.`, 'limit');
+                errorType = 'rate_limited';
+                errorDetails.waitMinutes = Math.ceil(result.wait_time / 60);
+            } else if (result.error.toLowerCase().includes('network')) {
+                errorType = 'network_error';
+            } else if (result.error.toLowerCase().includes('timeout')) {
+                errorType = 'timeout';
             } else {
-                this.showErrorOverlay('Failed to fetch subtitles.', 'error');
+                errorDetails.message = result.error;
             }
+
+            const message = this.notifications.formatErrorMessage(errorType, errorDetails);
+            this.notifications.showError(message, { type: errorType === 'daily_limit' ? 'warning' : 'error' });
 
             return false;
         }
 
         // Handle structured errors from Vocabumin API
         if (result.success === false && result.errorType) {
-            const { errorType, errorMessage, isUserSideIssue, isServerIssue } = result;
+            const { errorType, errorMessage, isUserSideIssue, isServerIssue, warpActive } = result;
 
             // Log for developer visibility
             if (isUserSideIssue) {
@@ -81,49 +92,25 @@ class Caption {
                 this.logger.error(`❌ [Server Error] ${errorMessage}`);
             }
 
-            // Show appropriate user message based on error type
-            let userMessage = '';
-            let messageType = 'error';
-
-            switch (errorType) {
-                case 'no_transcript':
-                    userMessage = '⚠️ This video has no subtitles available.';
-                    messageType = 'info';
-                    break;
-                case 'transcripts_disabled':
-                    userMessage = '⚠️ Subtitles are disabled for this video by the creator.';
-                    messageType = 'info';
-                    break;
-                case 'video_unavailable':
-                    userMessage = '⚠️ This video is unavailable or has an invalid ID.';
-                    messageType = 'info';
-                    break;
-                case 'youtube_ip_blocked':
-                    // Critical server issue - YouTube blocking the API
-                    const warpStatus = result.warpActive === false ? '\n\n⚠️ Warp proxy is INACTIVE!' : '';
-                    userMessage = `🚨 YouTube is blocking subtitle requests from the server.${warpStatus}\n\nThe server administrator has been notified. Please try again later.`;
-                    messageType = 'error';
-
-                    // Extra logging for developer
-                    this.logger.error(`🚨 [CRITICAL] YouTube IP Block Detected!`);
-                    if (result.warpActive === false) {
-                        this.logger.error(`🚨 [CRITICAL] Warp proxy is NOT ACTIVE - Check server immediately!`);
-                    }
-                    break;
-                case 'server_error':
-                    userMessage = `🔧 Subtitle server is experiencing issues.\n${errorMessage}\n\nPlease try again later.`;
-                    messageType = 'error';
-                    break;
-                case 'network_error':
-                    userMessage = '🔧 Network error. Please check your connection and try again.';
-                    messageType = 'error';
-                    break;
-                default:
-                    userMessage = `⚠️ Failed to fetch subtitles.\n${errorMessage}`;
-                    messageType = 'error';
+            // Extra logging for critical issues
+            if (errorType === 'youtube_ip_blocked') {
+                this.logger.error(`🚨 [CRITICAL] YouTube IP Block Detected!`);
+                if (warpActive === false) {
+                    this.logger.error(`🚨 [CRITICAL] Warp proxy is NOT ACTIVE - Check server immediately!`);
+                }
             }
 
-            this.showErrorOverlay(userMessage, messageType);
+            // Prepare error details
+            const errorDetails = {
+                message: errorMessage,
+                warpActive: warpActive
+            };
+
+            // Use unified notification system
+            const notificationType = isUserSideIssue ? 'info' : 'error';
+            const formattedMessage = this.notifications.formatErrorMessage(errorType, errorDetails);
+            this.notifications.showError(formattedMessage, { type: notificationType });
+
             return false;
         }
 
@@ -173,13 +160,27 @@ class Caption {
             type: result.captionData?.type
         });
 
-        // Show source indicator
-        if (result.cached && result.source === 'local_cache') {
-            this.subtitleManager.showCacheStatus('cached', result.age_minutes);
-        } else if (result.cached && result.source === 'server_cache') {
-            this.subtitleManager.showCacheStatus('server_cache');
+        // Show source indicator based on where subtitles came from
+        if (result.cached) {
+            // Determine cache source
+            if (result.source === 'local_cache' || result.source === 'memory') {
+                const ageMinutes = result.age_minutes || Math.floor((Date.now() - (result.cachedAt || Date.now())) / 60000);
+                this.notifications.showCacheStatus('cached', { ageMinutes });
+            } else if (result.source === 'server_cache') {
+                this.notifications.showCacheStatus('server_cache');
+            } else {
+                // Cached but from vocabumin or local-ytdlp (first fetch, now cached)
+                this.notifications.showCacheStatus(result.source);
+            }
         } else {
-            this.subtitleManager.showCacheStatus('fresh');
+            // Fresh fetch - show the actual source
+            if (result.source === 'vocabumin') {
+                this.notifications.showCacheStatus('vocabumin');
+            } else if (result.source === 'local-ytdlp') {
+                this.notifications.showCacheStatus('local-ytdlp');
+            } else {
+                this.notifications.showCacheStatus('fresh');
+            }
         }
 
         this.logger.info(`[Caption] Loaded ${processedCaptions.length} captions from ${result.source}`);
@@ -192,67 +193,6 @@ class Caption {
         };
     }
 
-    showErrorOverlay(message, type = 'error') {
-        // Create error overlay
-        let overlay = document.querySelector('#yt-subtitle-error-overlay');
-        if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.id = 'yt-subtitle-error-overlay';
-            document.body.appendChild(overlay);
-        }
-
-        // Style based on message type
-        let backgroundColor, borderColor;
-        switch (type) {
-            case 'info':
-                // User-side issue (blue/informational)
-                backgroundColor = 'rgba(59, 130, 246, 0.95)'; // Blue
-                borderColor = 'rgba(96, 165, 250, 0.5)';
-                break;
-            case 'limit':
-                // Rate limit (orange/warning)
-                backgroundColor = 'rgba(249, 115, 22, 0.95)'; // Orange
-                borderColor = 'rgba(251, 146, 60, 0.5)';
-                break;
-            case 'error':
-            default:
-                // Server/network error (red)
-                backgroundColor = 'rgba(220, 38, 38, 0.95)'; // Red
-                borderColor = 'rgba(239, 68, 68, 0.5)';
-        }
-
-        overlay.style.cssText = `
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: ${backgroundColor};
-            color: white;
-            padding: 20px 30px;
-            border-radius: 12px;
-            border: 2px solid ${borderColor};
-            font-size: 14px;
-            line-height: 1.6;
-            z-index: 10000;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            max-width: 400px;
-            text-align: center;
-            white-space: pre-line;
-        `;
-
-        overlay.textContent = message;
-        overlay.style.display = 'block';
-
-        // Hide after 5 seconds
-        setTimeout(() => {
-            overlay.style.opacity = '0';
-            setTimeout(() => {
-                overlay.style.display = 'none';
-                overlay.style.opacity = '1';
-            }, 300);
-        }, 5000);
-    }
 
     async fetchVTTFormat(videoId) {
         const serverUrl = 'http://localhost:5000';

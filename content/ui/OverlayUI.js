@@ -1,15 +1,18 @@
 class PlayerIntegration {
     constructor(overlayInstance, logger) {
         this.serverManager = overlayInstance.serverManager;
-        
+
         // Use storage from the main overlay instead of creating new instance
         this.storage = overlayInstance.storage;
-        
+
         // Caption Processing
         this.caption = overlayInstance.caption;
 
         // AI & Analysis
         this.AI = overlayInstance.AI;
+
+        // Notification service
+        this.notifications = overlayInstance.notifications;
 
         // Reference to the main overlay instance
         this.overlay = overlayInstance;
@@ -377,55 +380,15 @@ class PlayerIntegration {
 
     showUsageIndicator() {
         const apiMode = this.storage.state.apiMode || 'own';
-        if (apiMode !== 'public') return;
-        
-        // Remove existing if any
-        const existing = document.getElementById('yt-overlay-usage-indicator');
-        if (existing) existing.remove();
-        
+        if (apiMode !== 'public') {
+            this.notifications.hideUsageIndicator();
+            return;
+        }
+
         const usage = this.storage.state.publicApiUsage || 0;
         const limit = this.storage.state.publicApiLimit || 50;
-        const percentage = (usage / limit) * 100;
-        
-        const indicator = document.createElement('div');
-        indicator.id = 'yt-overlay-usage-indicator';
-        indicator.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(20, 20, 20, 0.9);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            z-index: 9998;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s;
-        `;
-        
-        let color = '#4CAF50';
-        if (percentage > 80) color = '#f44336';
-        else if (percentage > 60) color = '#FFA500';
-        
-        indicator.innerHTML = `
-            <span style="opacity: 0.7;">API:</span>
-            <span style="color: ${color}; font-weight: bold;">${usage}/${limit}</span>
-            <span style="opacity: 0.5;">today</span>
-        `;
-        
-        document.body.appendChild(indicator);
-        
-        // Auto-hide after 5 seconds if usage is low
-        if (percentage < 50) {
-            setTimeout(() => {
-                indicator.style.opacity = '0.3';
-                indicator.style.transform = 'translateX(-80%)';
-            }, 5000);
-        }
+
+        this.notifications.showUsageIndicator(usage, limit);
     }
 
     hideOverlay() {

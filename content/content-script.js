@@ -12,14 +12,15 @@ class YouTubeSubtitleOverlay {
         this.logger = new Logger('YT-Overlay');
         this.eventBus = new EventBus();
         this.state = new StateManager();
+        this.notifications = new NotificationService(this.logger);
         
         // 2. Services (with dependencies)
         this.serverManager = new ServerConnectionManager(this.logger);
-        this.storage = new StorageManagement(this.state, this.logger); 
-        this.AI = new AIService(this.storage, this.logger);
+        this.storage = new StorageManagement(this.state, this.logger);
+        this.AI = new AIService(this.storage, this.logger, this.notifications);
         
-        // 3. Caption needs state and serverManager
-        this.caption = new Caption(this.state, this.serverManager, this.logger);
+        // 3. Caption needs state, serverManager, logger, and notifications
+        this.caption = new Caption(this.state, this.serverManager, this.logger, this.notifications);
         
         // 4. DOM/Video observers
         this.domWatcher = new DOMWatcher(this.eventBus, this.state);
@@ -267,52 +268,7 @@ class YouTubeSubtitleOverlay {
     }
 
     showPlayerNotification(message) {
-        // Remove existing notification
-        const existing = document.getElementById('yt-subtitle-notification');
-        if (existing) existing.remove();
-        
-        // Create notification
-        const notification = document.createElement('div');
-        notification.id = 'yt-subtitle-notification';
-        notification.style.cssText = `
-            position: absolute;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 4px;
-            font-size: 14px;
-            z-index: 1000;
-            pointer-events: none;
-            animation: yt-subtitle-fade-in 0.3s ease;
-        `;
-        notification.textContent = message;
-        
-        // Add animation
-        if (!document.getElementById('yt-subtitle-fade-style')) {
-            const style = document.createElement('style');
-            style.id = 'yt-subtitle-fade-style';
-            style.textContent = `
-                @keyframes yt-subtitle-fade-in {
-                    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-                    to { opacity: 1; transform: translateX(-50%) translateY(0); }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-        
-        // Add to player
-        const player = document.querySelector('#movie_player');
-        if (player) {
-            player.appendChild(notification);
-            
-            // Auto-remove after 3 seconds
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
+        this.notifications.showPlayerNotification(message);
     }    
 
     // ?

@@ -1,8 +1,10 @@
 class AIService {
-    constructor(storage, logger) {
+    constructor(storage, logger, notifications) {
         this.logger = logger || console;
         // Storage management
         this.storage = storage;
+        // Notification service
+        this.notifications = notifications;
     }
 
     // 2. Call OpenAI API
@@ -299,7 +301,7 @@ class AIService {
                         
                         // Warning notifications (with proper check)
                         if (data._usage.remaining !== undefined && data._usage.remaining <= 5) {
-                            this.showLimitWarning(data._usage.remaining);
+                            this.notifications.showLimitWarning(data._usage.remaining);
                         }
 
                         // Clean the response (remove internal fields)
@@ -370,37 +372,6 @@ class AIService {
         
     }
 
-    showLimitWarning(remaining) {
-        // Create warning toast
-        const toast = document.createElement('div');
-        toast.style.cssText = `
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background: ${remaining <= 2 ? '#f44336' : '#FFA500'};
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            z-index: 10000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s ease;
-        `;
-        
-        toast.innerHTML = `
-            ⚠️ Only <strong>${remaining}</strong> lookup${remaining === 1 ? '' : 's'} left today!
-            ${remaining <= 2 ? '<br><small>Consider using your own API key</small>' : ''}
-        `;
-        
-        document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => toast.remove(), 300);
-        }, 5000);
-        
-        this.logger.info(`[YT Overlay] ⚠️ Limit warning shown: ${remaining} remaining`);
-    }
 
     async validateToken(token) {
         try {

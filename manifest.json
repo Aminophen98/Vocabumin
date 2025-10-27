@@ -33,6 +33,7 @@
         "content/core/Logger.js",
         "content/core/EventBus.js",
         "content/core/StateManager.js",
+        "content/core/NotificationService.js",
         "content/services/server-connection.js",
         "content/services/StorageService.js",
         "content/services/SubtitleManager.js",

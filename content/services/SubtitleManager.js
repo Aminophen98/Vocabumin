@@ -9,9 +9,10 @@
  * - Background logging (non-blocking)
  */
 class SubtitleManager {
-    constructor(logger, storage) {
+    constructor(logger, storage, notifications) {
         this.logger = logger || console;
         this.storage = storage;
+        this.notifications = notifications; // Unified notification service
         this.apiBase = 'https://yourvocab.vercel.app/api';
         this.vocabuminApi = 'https://api.vocabumin.aminophen.ir';
         this.ytdlpServer = 'http://localhost:5000';
@@ -218,74 +219,71 @@ class SubtitleManager {
             
             this.stats.memoryHits++;
             this.log('info', `⚡ Memory HIT | ${Math.round(age / 1000)}s old | ${elapsed}ms`);
-            
-            // Background logging
-            this.logFetch(videoId, videoTitle, true, cached.captionData?.source || 'memory', true)
-                .catch(() => {});
-            
+
+            // No logging for cached loads - doesn't count toward usage
+
             return {
                 captions: cached.captions,
                 captionData: cached.captionData,
-                source: 'memory_cache',
+                source: 'memory', // Changed to match CaptionService check
                 cached: true,
-                age_seconds: Math.round(age / 1000)
+                age_seconds: Math.round(age / 1000),
+                age_minutes: Math.round(age / 1000 / 60)
             };
         }
 
-        // STEP 2: Check IndexedDB + Server in parallel
-        this.log('debug', `🔄 Parallel | Checking local + server...`);
-        
-        const parallelStart = performance.now();
-        const [localCache, serverResponse] = await Promise.all([
-            this.getFromIndexedDB(videoId),
-            this.checkCacheAndLimits(videoId)
-        ]);
-        const parallelTime = (performance.now() - parallelStart).toFixed(1);
+        // STEP 2: Check IndexedDB first (no rate limit impact)
+        this.log('debug', `🔄 Checking IndexedDB...`);
 
-        // IndexedDB result
+        const localCache = await this.getFromIndexedDB(videoId);
+
+        // IndexedDB hit - return immediately WITHOUT calling server
         if (localCache) {
             const ageMin = Math.round(localCache.age / 1000 / 60);
             const elapsed = (performance.now() - startTime).toFixed(1);
-            
+
             this.stats.indexedDBHits++;
-            this.log('info', `✨ IndexedDB HIT | ${ageMin}m old | ${elapsed}ms (parallel: ${parallelTime}ms)`);
-            
+            this.log('info', `✨ IndexedDB HIT | ${ageMin}m old | ${elapsed}ms | NO rate limit impact`);
+
             this.addToMemoryCache(videoId, localCache.data.captions, localCache.data.captionData);
-            
-            this.logFetch(videoId, videoTitle, true, localCache.data.captionData?.source || 'local', true)
-                .catch(() => {});
-            
+
+            // No logging for cached loads - doesn't count toward usage
+
             return {
                 captions: localCache.data.captions,
                 captionData: localCache.data.captionData,
-                source: 'indexeddb_cache',
+                source: 'local_cache',
                 cached: true,
                 age_minutes: ageMin
             };
         }
 
-        // Server cache result
+        // STEP 3: No local cache - check server cache and rate limits
+        this.log('debug', `☁️ Checking server cache and limits...`);
+
+        const serverResponse = await this.checkCacheAndLimits(videoId);
+
+        // Server cache hit
         if (serverResponse.cached) {
             const elapsed = (performance.now() - startTime).toFixed(1);
-            
+
             this.stats.serverHits++;
-            this.log('info', `☁️ Server HIT | Hits: ${serverResponse.hit_count} | ${elapsed}ms (parallel: ${parallelTime}ms)`);
-            
+            this.log('info', `☁️ Server HIT | Hits: ${serverResponse.hit_count} | ${elapsed}ms`);
+
             const subtitles = serverResponse.subtitles;
             const captionData = {
                 language: subtitles.language || 'en',
                 source: 'server_cache'
             };
-            
+
             this.addToMemoryCache(videoId, subtitles.captions || subtitles, captionData);
             this.saveToIndexedDB(videoId, {
                 captions: subtitles.captions || subtitles,
                 captionData
             });
-            
-            this.logFetch(videoId, videoTitle, true, 'server_cache', true)
-                .catch(() => {});
-            
+
+            // No logging for cached loads - doesn't count toward usage
+
             return {
                 captions: subtitles.captions || subtitles,
                 captionData,
@@ -296,12 +294,12 @@ class SubtitleManager {
             };
         }
 
-        // STEP 3: Check rate limits
+        // STEP 4: Check rate limits (only for fresh fetches)
         if (!serverResponse.allowed) {
             const waitMin = Math.ceil(serverResponse.waitTime / 60);
             this.log('warn', `⏰ Rate Limited | ${serverResponse.reason} | Wait ${waitMin}m`);
             this.showRateLimitMessage(`Wait ${waitMin} minutes`, serverResponse.usage);
-            
+
             return {
                 error: `Rate limited. Wait ${waitMin} minutes.`,
                 wait_time: serverResponse.waitTime,
@@ -311,7 +309,7 @@ class SubtitleManager {
 
         this.showUsageStatus(serverResponse.usage);
 
-        // STEP 4: Fetch from source
+        // STEP 5: Fetch from source (only if not cached and rate limits allow)
         this.stats.misses++;
         this.log('info', `📡 Fetch | From source (${videoId})`);
         
@@ -320,17 +318,16 @@ class SubtitleManager {
         if (!fetchResult || !fetchResult.success) {
             const elapsed = (performance.now() - startTime).toFixed(1);
             this.log('error', `❌ Fetch | Failed | ${elapsed}ms`);
-            
-            this.logFetch(videoId, videoTitle, false, 'unknown', false)
-                .catch(() => {});
-            
+
+            // No logging for failed fetches - shouldn't count toward usage
+
             return {
                 error: 'Failed to fetch subtitles',
                 cached: false
             };
         }
 
-        // STEP 5: Store in all caches
+        // STEP 6: Store fresh fetch in all caches
         const fetchSource = fetchResult.captionData?.source || 'unknown';
         const elapsed = (performance.now() - startTime).toFixed(1);
         
@@ -345,19 +342,11 @@ class SubtitleManager {
             this.logFetch(videoId, videoTitle, true, fetchSource, false)
         ]).catch(() => {});
         
-        // Show status
-        if (fetchSource === 'vocabumin') {
-            this.showCacheStatus('vocabumin');
-        } else if (fetchSource === 'local-ytdlp') {
-            this.showCacheStatus('local-ytdlp');
-        } else {
-            this.showCacheStatus('fresh');
-        }
-        
+        // Return with proper source and cached flag
         return {
             ...fetchResult,
-            source: 'youtube',
-            cached: false
+            source: fetchSource, // Preserve actual source (vocabumin or local-ytdlp)
+            cached: false // This is a fresh fetch, not from cache
         };
     }
 
@@ -714,103 +703,22 @@ class SubtitleManager {
      * Show rate limit message
      */
     showRateLimitMessage(message, usage = null) {
-        const indicator = this.createOrUpdateIndicator('rate-limit');
-        indicator.innerHTML = `
-            <div style="font-weight: bold; margin-bottom: 4px;">⚠️ ${message}</div>
-            ${usage ? `
-                <div style="font-size: 11px; opacity: 0.9;">
-                    Burst: ${usage.burst} | Hour: ${usage.hourly} | Day: ${usage.daily}
-                </div>
-            ` : ''}
-        `;
-        indicator.style.background = 'rgba(220, 38, 38, 0.9)';
-        clearTimeout(indicator.hideTimeout);
+        // Rate limit handled by NotificationService in CaptionService
+        this.log('info', `⚠️ Rate limit message: ${message}`);
     }
 
     /**
      * Show usage status
      */
     showUsageStatus(usage) {
+        // Usage status logging only - UI handled by NotificationService
         if (!usage) return;
-        
-        const indicator = this.createOrUpdateIndicator('usage');
-        indicator.innerHTML = `
-            <div style="font-size: 11px;">
-                📊 Limits: ${usage.burst} (5min) | ${usage.hourly} (hour) | ${usage.daily} (day)
-            </div>
-        `;
-        indicator.style.background = 'rgba(59, 130, 246, 0.8)';
-        
-        indicator.hideTimeout = setTimeout(() => {
-            indicator.style.opacity = '0';
-            setTimeout(() => indicator.remove(), 300);
-        }, 5000);
+        this.log('debug', `📊 Usage - Burst: ${usage.burst} | Hour: ${usage.hourly} | Day: ${usage.daily}`);
     }
 
     /**
      * Show cache status
      */
-    showCacheStatus(status, ageMinutes = null) {
-        const indicator = this.createOrUpdateIndicator('cache');
-        
-        if (status === 'cached') {
-            indicator.textContent = `⚡ Cached (${ageMinutes}m ago)`;
-            indicator.style.background = 'rgba(34, 139, 34, 0.9)';
-        } else if (status === 'fresh') {
-            indicator.textContent = '🔄 Fresh fetch';
-            indicator.style.background = 'rgba(30, 144, 255, 0.9)';
-        } else if (status === 'server_cache') {
-            indicator.textContent = '☁️ Server cache';
-            indicator.style.background = 'rgba(139, 92, 246, 0.9)';
-        } else if (status === 'vocabumin') {
-            indicator.textContent = '🚂 Vocabumin API';
-            indicator.style.background = 'rgba(16, 185, 129, 0.9)';
-        } else if (status === 'local-ytdlp') {
-            indicator.textContent = '💻 Local Server';
-            indicator.style.background = 'rgba(245, 158, 11, 0.9)';
-        }
-        
-        indicator.hideTimeout = setTimeout(() => {
-            indicator.style.opacity = '0';
-            setTimeout(() => indicator.remove(), 300);
-        }, 3000);
-    }
-
-    /**
-     * Create or update status indicator
-     */
-    createOrUpdateIndicator(type) {
-        const id = `yt-overlay-${type}-indicator`;
-        let indicator = document.querySelector(`#${id}`);
-        
-        if (!indicator) {
-            indicator = document.createElement('div');
-            indicator.id = id;
-            indicator.style.cssText = `
-                position: fixed;
-                top: ${70 + (type === 'usage' ? 40 : type === 'rate-limit' ? 80 : 0)}px;
-                right: 20px;
-                background: rgba(0, 0, 0, 0.8);
-                color: white;
-                padding: 8px 12px;
-                border-radius: 8px;
-                font-size: 12px;
-                z-index: 9999;
-                transition: opacity 0.3s;
-                pointer-events: none;
-                max-width: 250px;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            `;
-            document.body.appendChild(indicator);
-        }
-        
-        if (indicator.hideTimeout) {
-            clearTimeout(indicator.hideTimeout);
-        }
-        
-        indicator.style.opacity = '1';
-        return indicator;
-    }
 
     /**
      * Clear memory cache

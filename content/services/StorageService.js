@@ -351,42 +351,6 @@ class StorageManagement {
         }
     }
 
-    showCacheStatus(status, ageMinutes = null) {
-        // Create or update cache indicator
-        let indicator = document.querySelector('#yt-overlay-cache-indicator');
-        if (!indicator) {
-            indicator = document.createElement('div');
-            indicator.id = 'yt-overlay-cache-indicator';
-            indicator.style.cssText = `
-                position: fixed;
-                top: 70px;
-                right: 20px;
-                background: rgba(0, 0, 0, 0.8);
-                color: white;
-                padding: 8px 12px;
-                border-radius: 20px;
-                font-size: 12px;
-                z-index: 9999;
-                transition: opacity 0.3s;
-                pointer-events: none;
-            `;
-            document.body.appendChild(indicator);
-        }
-        
-        if (status === 'cached') {
-            indicator.textContent = `⚡ Cached (${ageMinutes}m ago)`;
-            indicator.style.background = 'rgba(34, 139, 34, 0.9)';
-        } else if (status === 'fresh') {
-            indicator.textContent = '🔄 Fresh fetch';
-            indicator.style.background = 'rgba(30, 144, 255, 0.9)';
-        }
-        
-        // Fade out after 3 seconds
-        setTimeout(() => {
-            indicator.style.opacity = '0';
-            setTimeout(() => indicator.remove(), 300);
-        }, 3000);
-    }
 
     // Sync database cache in background
     async syncDatabaseCache() {
