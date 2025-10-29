@@ -8,15 +8,23 @@ console.log('[Background] Service worker starting...');
 // Extension lifecycle
 chrome.runtime.onInstalled.addListener((details) => {
     console.log('[Background] Extension installed/updated:', details.reason);
-    
+
     if (details.reason === 'install') {
-        console.log('[Background] First time installation');
-        // Set default settings
+        console.log('[Background] First time installation - opening onboarding');
+
+        // Set default settings and onboarding flag
         chrome.storage.sync.set({
+            needsOnboarding: true,
             overlayEnabled: true,
             theme: 'dark',
             fontSize: 'medium',
-            preferredLanguage: 'en'
+            // Don't set language preferences - force user to choose during onboarding
+            // targetLanguage, definitionLevel, and sourceLanguage will be set by onboarding flow
+        });
+
+        // Open onboarding page in web app
+        chrome.tabs.create({
+            url: 'https://yourvocab.vercel.app/extension/onboarding'
         });
     }
 });
@@ -58,19 +66,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         case 'CAPTIONS_LOADED':
             handleCaptionsLoaded(request, sender);
             break;
-            
+
         case 'CAPTION_FETCH_FAILED':
             handleCaptionFetchFailed(request, sender);
             break;
-            
+
         case 'GET_SETTINGS':
             getExtensionSettings(sendResponse);
             return true; // Keep message channel open
-            
+
         case 'UPDATE_SETTINGS':
             updateExtensionSettings(request.settings, sendResponse);
             return true;
-            
+
+        case 'ONBOARDING_COMPLETE':
+            handleOnboardingComplete(request, sendResponse);
+            return true;
+
         default:
             console.log('[Background] Unknown message type:', request.type);
     }
@@ -161,6 +173,27 @@ function handleCaptionFetchFailed(request, sender) {
         color: '#F44336',
         tabId: sender.tab.id
     });
+}
+
+/**
+ * Handle onboarding completion
+ */
+async function handleOnboardingComplete(request, sendResponse) {
+    try {
+        console.log('[Background] Onboarding completed with settings:', request.settings);
+
+        // Save settings from onboarding
+        await chrome.storage.sync.set({
+            needsOnboarding: false,
+            ...request.settings
+        });
+
+        console.log('[Background] Onboarding settings saved successfully');
+        sendResponse({ success: true });
+    } catch (error) {
+        console.error('[Background] Error saving onboarding settings:', error);
+        sendResponse({ success: false, error: error.message });
+    }
 }
 
 /**

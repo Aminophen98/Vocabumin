@@ -169,13 +169,21 @@ class YouTubeSubtitleOverlay {
     }
 
     async init() {
-        
-        try {            
+
+        try {
             await this.domWatcher.waitForYouTube();
-            
+
             this.logger.debug('YouTube ready, setting up monitoring...');
             this.domWatcher.setupVideoMonitoring();
-            
+
+            // Check if onboarding is needed
+            const onboardingNeeded = await this.checkOnboardingStatus();
+            if (onboardingNeeded) {
+                this.logger.info('[YT Overlay] ⚠️ Onboarding required - showing banner');
+                this.player.showOnboardingBanner();
+                return; // Don't initialize overlay until onboarding is complete
+            }
+
             // Set up player button
             this.player.setupPlayerButton();
 
@@ -203,11 +211,42 @@ class YouTubeSubtitleOverlay {
             
             
             this.logger.info('[YT Overlay] ✅ Initialization complete!');
-  
-    
+
+
         } catch (error) {
             this.logger.error('Initialization error:', error);
         }
+    }
+
+    /**
+     * Check if onboarding is needed
+     * Returns true if user needs to complete onboarding
+     */
+    async checkOnboardingStatus() {
+        const settings = await chrome.storage.sync.get([
+            'needsOnboarding',
+            'targetLanguage',
+            'definitionLevel',
+            'vocabToken'
+        ]);
+
+        // Check if any critical setting is missing
+        const needsOnboarding = settings.needsOnboarding !== false;
+        const missingLanguage = !settings.targetLanguage;
+        const missingLevel = !settings.definitionLevel;
+        const missingAuth = !settings.vocabToken;
+
+        if (needsOnboarding || missingLanguage || missingLevel || missingAuth) {
+            this.logger.warn('[YT Overlay] Missing required settings:', {
+                needsOnboarding,
+                missingLanguage,
+                missingLevel,
+                missingAuth
+            });
+            return true;
+        }
+
+        return false;
     }
 
 

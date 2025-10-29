@@ -554,6 +554,130 @@ class PlayerIntegration {
         }
     }
 
+    /**
+     * Show onboarding banner when setup is incomplete
+     * Prompts user to complete setup before using the extension
+     */
+    showOnboardingBanner() {
+        // Don't show if already exists
+        if (document.querySelector('#yt-onboarding-banner')) {
+            return;
+        }
+
+        // Add banner styles
+        if (!document.querySelector('#yt-onboarding-banner-styles')) {
+            const style = document.createElement('style');
+            style.id = 'yt-onboarding-banner-styles';
+            style.textContent = `
+                #yt-onboarding-banner {
+                    position: fixed;
+                    top: 70px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 16px 24px;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                    z-index: 9999;
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                    font-family: "Roboto", Arial, sans-serif;
+                    animation: slideDown 0.4s ease-out;
+                }
+
+                @keyframes slideDown {
+                    from {
+                        opacity: 0;
+                        transform: translateX(-50%) translateY(-20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(-50%) translateY(0);
+                    }
+                }
+
+                #yt-onboarding-banner-content {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+                }
+
+                #yt-onboarding-banner-title {
+                    font-size: 16px;
+                    font-weight: 600;
+                }
+
+                #yt-onboarding-banner-subtitle {
+                    font-size: 13px;
+                    opacity: 0.9;
+                }
+
+                #yt-onboarding-banner-btn {
+                    background: white;
+                    color: #667eea;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    white-space: nowrap;
+                }
+
+                #yt-onboarding-banner-btn:hover {
+                    background: rgba(255, 255, 255, 0.9);
+                    transform: scale(1.05);
+                }
+
+                #yt-onboarding-banner-btn:active {
+                    transform: scale(0.95);
+                }
+
+                @media (max-width: 768px) {
+                    #yt-onboarding-banner {
+                        top: 60px;
+                        left: 12px;
+                        right: 12px;
+                        transform: none;
+                        flex-direction: column;
+                        align-items: stretch;
+                        padding: 12px 16px;
+                    }
+
+                    #yt-onboarding-banner-btn {
+                        width: 100%;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Create banner
+        const banner = document.createElement('div');
+        banner.id = 'yt-onboarding-banner';
+        banner.innerHTML = `
+            <div id="yt-onboarding-banner-content">
+                <div id="yt-onboarding-banner-title">⚠️ Setup Required</div>
+                <div id="yt-onboarding-banner-subtitle">Complete Vocabumin setup to start learning vocabulary</div>
+            </div>
+            <button id="yt-onboarding-banner-btn">Complete Setup</button>
+        `;
+
+        // Add click handler
+        const button = banner.querySelector('#yt-onboarding-banner-btn');
+        button.addEventListener('click', () => {
+            window.open('https://yourvocab.vercel.app/extension/onboarding', '_blank');
+        });
+
+        // Add to page
+        document.body.appendChild(banner);
+
+        this.logger.info('[YT Overlay] 📢 Onboarding banner displayed');
+    }
+
     setupButtonVisibility(player, buttonContainer) {
         let hideTimeout;
         
