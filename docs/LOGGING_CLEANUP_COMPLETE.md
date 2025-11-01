@@ -46,11 +46,11 @@ All logs now follow: `[SubtitleManager] 🔍 Category | Action | Details`
 - `✅ Fetch | Success ({source}) | {time}`
 - `❌ Fetch | Failed | {time}`
 
-**Vocabumin API (🚂)**
-- `🚂 Vocabumin | Requesting ({videoId})`
-- `🚂 Vocabumin | Success | {segments} segments ({type}) | {time}ms`
-- `🚂 Vocabumin | Failed | HTTP {status} | {time}ms`
-- `🚂 Vocabumin | Duration reduced to 45% (auto-captions)`
+**Vocaminary API (🚂)**
+- `🚂 Vocaminary | Requesting ({videoId})`
+- `🚂 Vocaminary | Success | {segments} segments ({type}) | {time}ms`
+- `🚂 Vocaminary | Failed | HTTP {status} | {time}ms`
+- `🚂 Vocaminary | Duration reduced to 45% (auto-captions)`
 
 **Local yt-dlp (💻)**
 - `💻 Local yt-dlp | Success (JSON3/VTT) | {time}ms`
@@ -95,7 +95,7 @@ this.log('info', `✅ Fetch | Success | ${elapsed}ms`);
 ### **2. Context Always Included**
 - videoId shown in relevant logs
 - Cache age shown (seconds, minutes, or days)
-- Source shown (memory, indexeddb, server, vocabumin, local-ytdlp)
+- Source shown (memory, indexeddb, server, vocaminary, local-ytdlp)
 - Error details included
 
 ### **3. Centralized Logging**
@@ -164,7 +164,7 @@ this.logFetch(videoId, videoTitle, true, source, true)
 - Background operations
 
 ### **warn** (Issues but not critical)
-- Vocabumin/yt-dlp failures (with fallback available)
+- Vocaminary/yt-dlp failures (with fallback available)
 - Server store failures
 - Minor errors
 
@@ -197,9 +197,9 @@ this.logFetch(videoId, videoTitle, true, source, true)
 [SubtitleManager] 🎬 Fetch | Start (dQw4w9WgXcQ)
 [SubtitleManager] 🔄 Parallel | Checking local + server...
 [SubtitleManager] 📡 Fetch | From source (dQw4w9WgXcQ)
-[SubtitleManager] 🚂 Vocabumin | Requesting (dQw4w9WgXcQ)
-[SubtitleManager] 🚂 Vocabumin | Success | 142 segments (manual) | 456ms
-[SubtitleManager] ✅ Fetch | Success (vocabumin) | 1234.5ms
+[SubtitleManager] 🚂 Vocaminary | Requesting (dQw4w9WgXcQ)
+[SubtitleManager] 🚂 Vocaminary | Success | 142 segments (manual) | 456ms
+[SubtitleManager] ✅ Fetch | Success (vocaminary) | 1234.5ms
 [SubtitleManager] 💾 IndexedDB | Saved (dQw4w9WgXcQ)
 [SubtitleManager] ☁️ Server | Stored cache (dQw4w9WgXcQ)
 ```
@@ -209,8 +209,8 @@ this.logFetch(videoId, videoTitle, true, source, true)
 [SubtitleManager] 🎬 Fetch | Start (dQw4w9WgXcQ)
 [SubtitleManager] 🔄 Parallel | Checking local + server...
 [SubtitleManager] 📡 Fetch | From source (dQw4w9WgXcQ)
-[SubtitleManager] 🚂 Vocabumin | Requesting (dQw4w9WgXcQ)
-[SubtitleManager] 🚂 Vocabumin | Failed | HTTP 404 | 234ms
+[SubtitleManager] 🚂 Vocaminary | Requesting (dQw4w9WgXcQ)
+[SubtitleManager] 🚂 Vocaminary | Failed | HTTP 404 | 234ms
 [SubtitleManager] 📡 Source | Falling back to local yt-dlp
 [SubtitleManager] 💻 Local yt-dlp | Success (JSON3) | 1567ms
 [SubtitleManager] ✅ Fetch | Success (local-ytdlp) | 2345.6ms

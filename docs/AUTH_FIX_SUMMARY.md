@@ -169,7 +169,7 @@ chrome://extensions/ → Click reload
 
 ### After (fixed):
 ```
-✅ [YourVocab] Auth saved successfully! Expires: 11/24/2025
+✅ [Vocaminary] Auth saved successfully! Expires: 11/24/2025
 ✅ [Extension Auth] Token expires at: 11/24/2025, 12:34:15 PM
 ✅ Connected
 ```
@@ -265,7 +265,7 @@ If users still encounter issues:
 
 2. **Reconnect:**
    ```
-   Visit: https://yourvocab.vercel.app/extension-auth
+   Visit: https://app.vocaminary.com/extension-auth
    ```
 
 3. **Reload extension:**

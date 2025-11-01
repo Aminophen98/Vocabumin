@@ -661,7 +661,7 @@ class PlayerIntegration {
         banner.innerHTML = `
             <div id="yt-onboarding-banner-content">
                 <div id="yt-onboarding-banner-title">⚠️ Setup Required</div>
-                <div id="yt-onboarding-banner-subtitle">Complete Vocabumin setup to start learning vocabulary</div>
+                <div id="yt-onboarding-banner-subtitle">Complete Vocaminary setup to start learning vocabulary</div>
             </div>
             <button id="yt-onboarding-banner-btn">Complete Setup</button>
         `;
@@ -669,7 +669,7 @@ class PlayerIntegration {
         // Add click handler
         const button = banner.querySelector('#yt-onboarding-banner-btn');
         button.addEventListener('click', () => {
-            window.open('https://yourvocab.vercel.app/extension/onboarding', '_blank');
+            window.open('https://app.vocaminary.com/extension/onboarding', '_blank');
         });
 
         // Add to page
@@ -822,7 +822,7 @@ class PlayerIntegration {
                 }
             } else {
                 // Using VPS - skip local server check
-                this.logger.info('[OverlayUI] 🚀 Using Vocabumin VPS - skipping local server check');
+                this.logger.info('[OverlayUI] 🚀 Using Vocaminary VPS - skipping local server check');
             }
             
             // Check if we need to fetch captions

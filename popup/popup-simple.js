@@ -59,10 +59,10 @@ class SimplePopupManager {
             
             if (vocabToken) {
                 // Connected - open dashboard
-                chrome.tabs.create({ url: 'https://yourvocab.vercel.app' });
+                chrome.tabs.create({ url: 'https://app.vocaminary.com' });
             } else {
                 // Not connected - open auth page
-                chrome.tabs.create({ url: 'https://yourvocab.vercel.app/extension-auth' });
+                chrome.tabs.create({ url: 'https://app.vocaminary.com/extension-auth' });
             }
             window.close();
         });
@@ -115,7 +115,7 @@ class SimplePopupManager {
 
     async loadConnectionStatus() {
         try {
-            // Check YourVocab connection
+            // Check Vocaminary connection
             const { vocabToken, vocabTokenExpiry } = await chrome.storage.sync.get(['vocabToken', 'vocabTokenExpiry']);
             const isConnected = !!vocabToken;
 
@@ -124,7 +124,12 @@ class SimplePopupManager {
                 if (vocabTokenExpiry && Date.now() >= vocabTokenExpiry) {
                     this.statusDot.classList.add('disconnected');
                     this.statusText.textContent = 'Expired';
-                    this.dashboardBtn.innerHTML = '<span>🔗</span> Reconnect';
+                    this.dashboardBtn.innerHTML = `
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 13C10.4295 13.5741 10.9774 14.0491 11.6066 14.3929C12.2357 14.7367 12.9315 14.9411 13.6467 14.9923C14.3618 15.0435 15.0796 14.9403 15.7513 14.6897C16.4231 14.4392 17.0331 14.047 17.54 13.54L20.54 10.54C21.4508 9.59695 21.9548 8.33394 21.9434 7.02296C21.932 5.71198 21.4061 4.45791 20.4791 3.53087C19.5521 2.60383 18.298 2.07799 16.987 2.0666C15.676 2.0552 14.413 2.55918 13.47 3.46997L11.75 5.17997" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14 11C13.5705 10.4259 13.0226 9.95083 12.3934 9.60707C11.7642 9.26331 11.0685 9.05889 10.3533 9.00768C9.63819 8.95646 8.92037 9.05967 8.24861 9.31022C7.57685 9.56077 6.96684 9.9529 6.45996 10.46L3.45996 13.46C2.54917 14.403 2.04519 15.666 2.05659 16.977C2.06798 18.288 2.59382 19.542 3.52086 20.4691C4.44791 21.3961 5.70197 21.922 7.01295 21.9334C8.32393 21.9448 9.58694 21.4408 10.53 20.53L12.24 18.82" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Reconnect`;
                 } else {
                     this.statusDot.classList.remove('disconnected');
 
@@ -146,14 +151,26 @@ class SimplePopupManager {
                     }
 
                     // Update button for connected state
-                    this.dashboardBtn.innerHTML = '<span>📊</span> Dashboard';
+                    this.dashboardBtn.innerHTML = `
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1" fill="currentColor"/>
+                        </svg>
+                        Dashboard`;
                 }
             } else {
                 this.statusDot.classList.add('disconnected');
                 this.statusText.textContent = 'Offline';
 
                 // Update button for disconnected state
-                this.dashboardBtn.innerHTML = '<span>🔗</span> Connect to Web App';
+                this.dashboardBtn.innerHTML = `
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 13C10.4295 13.5741 10.9774 14.0491 11.6066 14.3929C12.2357 14.7367 12.9315 14.9411 13.6467 14.9923C14.3618 15.0435 15.0796 14.9403 15.7513 14.6897C16.4231 14.4392 17.0331 14.047 17.54 13.54L20.54 10.54C21.4508 9.59695 21.9548 8.33394 21.9434 7.02296C21.932 5.71198 21.4061 4.45791 20.4791 3.53087C19.5521 2.60383 18.298 2.07799 16.987 2.0666C15.676 2.0552 14.413 2.55918 13.47 3.46997L11.75 5.17997" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 11C13.5705 10.4259 13.0226 9.95083 12.3934 9.60707C11.7642 9.26331 11.0685 9.05889 10.3533 9.00768C9.63819 8.95646 8.92037 9.05967 8.24861 9.31022C7.57685 9.56077 6.96684 9.9529 6.45996 10.46L3.45996 13.46C2.54917 14.403 2.04519 15.666 2.05659 16.977C2.06798 18.288 2.59382 19.542 3.52086 20.4691C4.44791 21.3961 5.70197 21.922 7.01295 21.9334C8.32393 21.9448 9.58694 21.4408 10.53 20.53L12.24 18.82" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Connect`;
             }
 
             // Check server status
@@ -184,7 +201,7 @@ class SimplePopupManager {
             }
 
             // Call the API
-            const response = await fetch('https://yourvocab.vercel.app/api/subtitles/check-limit', {
+            const response = await fetch('https://app.vocaminary.com/api/subtitles/check-limit', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${vocabToken}`,
@@ -249,18 +266,17 @@ class SimplePopupManager {
 
         countElement.textContent = `${usageString}`;
         barElement.style.width = `${percent}%`;
-        percentElement.textContent = percent > 10 ? `${percent}%` : '';
-        
+
         this.updateBarColor(barElement, percent);
     }
 
     showRateLimitWarning(waitTime, reason) {
         const minutes = Math.ceil(waitTime / 60);
-        const message = reason === 'burst_limit' 
-            ? `⏰ Wait ${minutes} minutes (5-min limit)`
+        const message = reason === 'burst_limit'
+            ? `Wait ${minutes} minutes (5-min limit)`
             : reason === 'hourly_limit'
-            ? `⏰ Wait ${minutes} minutes (hourly limit)`
-            : `⏰ Daily limit reached - resets at midnight`;
+            ? `Wait ${minutes} minutes (hourly limit)`
+            : `Daily limit reached - resets at midnight`;
 
         // Create or update warning element
         let warning = document.getElementById('rateLimitWarning');
@@ -268,13 +284,14 @@ class SimplePopupManager {
             warning = document.createElement('div');
             warning.id = 'rateLimitWarning';
             warning.style.cssText = `
-                padding: 12px;
-                background: #fef3c7;
-                border-left: 4px solid #f59e0b;
-                color: #92400e;
-                font-size: 13px;
+                padding: 10px;
+                background: rgba(245, 158, 11, 0.15);
+                border-left: 3px solid #f59e0b;
+                color: #fbbf24;
+                font-size: 11px;
                 font-weight: 600;
-                margin-bottom: 16px;
+                margin-top: 10px;
+                border-radius: 4px;
             `;
             const usageSection = document.querySelector('.usage-section');
             usageSection.appendChild(warning);
@@ -314,9 +331,9 @@ class SimplePopupManager {
                 this.apiBar.style.width = '100%';
                 this.apiBar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
                 this.apiPercent.textContent = '∞';
-                
+
                 this.apiModeInfo.style.display = 'block';
-                this.apiModeText.textContent = '🔑 Using your own OpenAI API key';
+                this.apiModeText.textContent = 'Using your own OpenAI API key';
                 return;
             }
 
@@ -324,12 +341,12 @@ class SimplePopupManager {
             if (!storage.vocabToken) {
                 this.apiCount.textContent = 'Not connected';
                 this.apiModeInfo.style.display = 'block';
-                this.apiModeText.textContent = '⚠️ Connect to YourVocab to use public API';
+                this.apiModeText.textContent = 'Connect to Vocaminary to use public API';
                 return;
             }
 
             // Fetch user's tier and limits from API
-            const response = await fetch('https://yourvocab.vercel.app/api/progress', {
+            const response = await fetch('https://app.vocaminary.com/api/progress', {
                 headers: {
                     'Authorization': `Bearer ${storage.vocabToken}`
                 }
@@ -351,7 +368,7 @@ class SimplePopupManager {
                 this.apiBar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
                 this.apiPercent.textContent = '∞';
                 this.apiModeInfo.style.display = 'block';
-                this.apiModeText.textContent = `💎 ${data.badge} - Unlimited lookups`;
+                this.apiModeText.textContent = `${data.badge} - Unlimited lookups`;
             } else {
                 // Show usage with tier badge
                 const usageString = `${usage}/${limit}`;
@@ -361,18 +378,18 @@ class SimplePopupManager {
                     this.apiPercent,
                     usageString
                 );
-                
+
                 this.apiModeInfo.style.display = 'block';
-                this.apiModeText.textContent = `${data.badgeEmoji} ${data.badge} - ${remaining} lookups remaining this month`;
+                this.apiModeText.textContent = `${data.badge} - ${remaining} lookups remaining this month`;
             }
 
             console.log('[YT Popup] 📊 Tier:', data.tier, 'Usage:', usage, 'Limit:', limit);
 
         } catch (error) {
-            console.error('[YT Popup] ❌ Error loading API usage:', error);
+            console.error('[YT Popup] Error loading API usage:', error);
             this.apiCount.textContent = 'Error';
             this.apiModeInfo.style.display = 'block';
-            this.apiModeText.textContent = '❌ Failed to load usage data';
+            this.apiModeText.textContent = 'Failed to load usage data';
         }
     }
 
@@ -434,7 +451,7 @@ class SimplePopupManager {
             }
 
             // Fetch recent videos from API
-            const response = await fetch('https://yourvocab.vercel.app/api/my-videos', {
+            const response = await fetch('https://app.vocaminary.com/api/my-videos', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${vocabToken}`,
@@ -463,8 +480,8 @@ class SimplePopupManager {
             // Render videos
             this.recentVideosList.innerHTML = recentVideos.map(video => `
                 <div class="recent-video-item" data-video-id="${video.video_id}">
-                    <img 
-                        src="https://img.youtube.com/vi/${video.video_id}/default.jpg" 
+                    <img
+                        src="https://img.youtube.com/vi/${video.video_id}/default.jpg"
                         alt="${this.escapeHtml(video.video_title || 'Video')}"
                         class="recent-video-thumbnail"
                         onerror="this.style.display='none'"
@@ -472,8 +489,8 @@ class SimplePopupManager {
                     <div class="recent-video-info">
                         <div class="recent-video-title">${this.escapeHtml(video.video_title || 'Unknown Video')}</div>
                         <div class="recent-video-meta">
-                            <span>📚 ${video.words_saved || 0}</span>
-                            <span>👁️ ${video.view_count || 1}</span>
+                            <span>${video.words_saved || 0} words</span>
+                            <span>${video.view_count || 1} views</span>
                             <span>${this.formatTimeAgo(video.last_viewed)}</span>
                         </div>
                     </div>

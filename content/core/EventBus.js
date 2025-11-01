@@ -58,7 +58,7 @@ class EventBus {
 
     setupWindowEventListeners() {
         window.addEventListener('message', async (event) => {
-            if (event.data.type === 'YOURVOCAB_AUTH' && event.origin === 'https://yourvocab-app.vercel.app') {
+            if (event.data.type === 'VOCAMINARY_AUTH' && event.origin === 'https://app.vocaminary.com') {
                 this.emit('vocabAuth', event.data);
             }
             this.emit('windowMessage', event);

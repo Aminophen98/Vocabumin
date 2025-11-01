@@ -21,7 +21,7 @@ Use this checklist before publishing your extension to ensure everything is read
 ## ✅ Code Quality - COMPLETED
 
 - [x] **Security audit** - No hardcoded credentials found
-- [x] **API endpoints** - Properly configured (yourvocab.vercel.app, api.vocabumin.aminophen.ir)
+- [x] **API endpoints** - Properly configured (app.vocaminary.com, api.vocaminary.com)
 - [x] **manifest.json** - Updated with author, homepage, proper permissions
 
 ## ⚠️ Still TODO Before Publishing

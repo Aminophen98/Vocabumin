@@ -1,21 +1,21 @@
-console.log('[YourVocab] Auth bridge loaded');
+console.log('[Vocaminary] Auth bridge loaded');
 
 window.addEventListener('message', async (event) => {
-  console.log('[YourVocab] Received message:', event.data);
+  console.log('[Vocaminary] Received message:', event.data);
   
-  if (event.origin !== 'https://yourvocab.vercel.app' && event.origin !== 'http://localhost:3000') {
-    console.log('[YourVocab] Wrong origin:', event.origin);
+  if (event.origin !== 'https://app.vocaminary.com' && event.origin !== 'http://localhost:3000') {
+    console.log('[Vocaminary] Wrong origin:', event.origin);
     return;
   }
   
-  if (event.data.type === 'YOURVOCAB_AUTH') {
-    console.log('[YourVocab] Auth message detected, saving...');
+  if (event.data.type === 'VOCAMINARY_AUTH') {
+    console.log('[Vocaminary] Auth message detected, saving...');
 
     // Calculate expiry if not provided (fallback to 30 days)
     const expiresAt = event.data.expiresAt || (Date.now() + 30 * 24 * 60 * 60 * 1000);
     const expiryDate = new Date(expiresAt);
 
-    console.log('[YourVocab] Token expires at:', expiryDate.toLocaleString());
+    console.log('[Vocaminary] Token expires at:', expiryDate.toLocaleString());
 
     chrome.storage.sync.set({
       vocabToken: event.data.token,
@@ -24,16 +24,16 @@ window.addEventListener('message', async (event) => {
       vocabTokenExpiry: expiresAt
     }, () => {
       if (chrome.runtime.lastError) {
-        console.error('[YourVocab] Save failed:', chrome.runtime.lastError);
+        console.error('[Vocaminary] Save failed:', chrome.runtime.lastError);
       } else {
-        console.log('[YourVocab] Auth saved successfully! Expires:', expiryDate.toLocaleDateString());
-        window.postMessage({ type: 'YOURVOCAB_AUTH_SUCCESS' }, '*');
+        console.log('[Vocaminary] Auth saved successfully! Expires:', expiryDate.toLocaleDateString());
+        window.postMessage({ type: 'VOCAMINARY_AUTH_SUCCESS' }, '*');
       }
     });
   }
 
-  if (event.data.type === 'YOURVOCAB_ONBOARDING') {
-    console.log('[YourVocab] Onboarding message detected, saving settings...');
+  if (event.data.type === 'VOCAMINARY_ONBOARDING') {
+    console.log('[Vocaminary] Onboarding message detected, saving settings...');
 
     const settings = event.data.settings;
     const expiresAt = event.data.expiresAt || (Date.now() + 30 * 24 * 60 * 60 * 1000);
@@ -55,23 +55,23 @@ window.addEventListener('message', async (event) => {
       needsOnboarding: false
     }, () => {
       if (chrome.runtime.lastError) {
-        console.error('[YourVocab] Onboarding save failed:', chrome.runtime.lastError);
+        console.error('[Vocaminary] Onboarding save failed:', chrome.runtime.lastError);
       } else {
-        console.log('[YourVocab] Onboarding completed successfully!');
-        console.log('[YourVocab] Settings:', {
+        console.log('[Vocaminary] Onboarding completed successfully!');
+        console.log('[Vocaminary] Settings:', {
           targetLanguage: settings.targetLanguage,
           definitionLevel: settings.definitionLevel,
           apiMode: settings.apiMode
         });
-        window.postMessage({ type: 'YOURVOCAB_ONBOARDING_SUCCESS' }, '*');
+        window.postMessage({ type: 'VOCAMINARY_ONBOARDING_SUCCESS' }, '*');
       }
     });
   }
 
-  const channel = new BroadcastChannel('yourvocab-auth');
+  const channel = new BroadcastChannel('vocaminary-auth');
   channel.addEventListener('message', async (event) => {
       if (event.data.type === 'SIGNED_OUT') {
-          console.log('[YourVocab] Sign out detected, clearing extension auth');
+          console.log('[Vocaminary] Sign out detected, clearing extension auth');
           await chrome.storage.sync.remove([
               'vocabToken',
               'vocabUserId',

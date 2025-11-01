@@ -45,7 +45,7 @@ Desktop.ini
 .cache/
 
 # AI Assistant Files
-.serena/
+CLAUDE.md
 .claude/
 
 # Temporary files

@@ -1,4 +1,4 @@
-// JWT Token Manager for YourVocab Extension
+// JWT Token Manager for Vocaminary Extension
 // Handles token persistence, validation, and auto-refresh
 
 class JWTTokenManager {
@@ -88,10 +88,10 @@ class JWTTokenManager {
     }
   }
 
-  // Refresh token via YourVocab API
+  // Refresh token via Vocaminary API
   async refreshToken(currentToken, userId) {
     try {
-      const response = await fetch('https://yourvocab.vercel.app/api/auth/refresh', {
+      const response = await fetch('https://app.vocaminary.com/api/auth/refresh', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ class JWTTokenManager {
       console.log('[YT Overlay] 🔄 Attempting silent reconnection...');
       
       // Try to get new token using stored user ID
-      const response = await fetch('https://yourvocab.vercel.app/api/auth/extension-token', {
+      const response = await fetch('https://app.vocaminary.com/api/auth/extension-token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

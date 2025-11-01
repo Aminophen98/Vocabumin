@@ -17,7 +17,7 @@ YouTube Subtitle Overlay takes your privacy seriously. This document explains wh
 The extension stores the following data **locally on your device**:
 
 - **Extension settings**: API mode (own/public), subtitle source preference, OpenAI API key (if provided)
-- **Authentication tokens**: JWT tokens for YourVocab API (if you authenticate)
+- **Authentication tokens**: JWT tokens for Vocaminary API (if you authenticate)
 - **Cache data**: Recently viewed video IDs and their subtitle timings
 - **Error logs**: Technical error messages for debugging (stored temporarily)
 
@@ -41,7 +41,7 @@ The extension runs on YouTube pages to detect videos and synchronize subtitles w
 - **What we access**: Video player elements, current playback time, video ID from the URL
 - **What we send**: Nothing. The extension only reads from YouTube's page.
 
-### YourVocab API (yourvocab.vercel.app)
+### Vocaminary API (app.vocaminary.com)
 Optional cloud service for faster subtitle loading and cross-device caching.
 
 **Endpoints used:**
@@ -53,7 +53,7 @@ Optional cloud service for faster subtitle loading and cross-device caching.
 **Data sent:**
 - Video ID (e.g., "dQw4w9WgXcQ")
 - Language code (e.g., "en")
-- Authentication token (if you're logged in to YourVocab)
+- Authentication token (if you're logged in to Vocaminary)
 
 **Data received:**
 - Subtitle content with word-level timing
@@ -82,16 +82,16 @@ If you provide your own OpenAI API key, the extension may send word definitions 
 | Service | Purpose | Data Shared | Privacy Policy |
 |---------|---------|-------------|----------------|
 | YouTube | Video playback detection | None (read-only) | [YouTube Privacy](https://policies.google.com/privacy) |
-| YourVocab API | Subtitle caching | Video IDs, auth tokens | See below |
+| Vocaminary API | Subtitle caching | Video IDs, auth tokens | See below |
 | OpenAI (optional) | AI definitions | Words you click | [OpenAI Privacy](https://openai.com/policies/privacy-policy) |
 | yt-dlp (local) | Subtitle extraction | None (runs locally) | [yt-dlp GitHub](https://github.com/yt-dlp/yt-dlp) |
 
-### YourVocab API Privacy
+### Vocaminary API Privacy
 
-The YourVocab API is hosted on Vercel and operated by the extension developer.
+The Vocaminary API is hosted on Vercel and operated by the extension developer.
 
 - **No personal data required** - You can use it anonymously
-- **Optional authentication** - JWT tokens are only used if you create an account at yourvocab.vercel.app
+- **Optional authentication** - JWT tokens are only used if you create an account at app.vocaminary.com
 - **Shared subtitle cache** - Subtitles you fetch are stored server-side and shared with other users (to reduce load on YouTube)
 - **Rate limiting** - IP addresses are temporarily logged to prevent abuse
 - **No analytics tracking** - We don't use Google Analytics, Meta Pixel, or similar trackers
@@ -120,13 +120,13 @@ All data is stored locally in Chrome. To view it:
 ### Delete Your Data
 - **Local data**: Uninstall the extension or clear Chrome's extension storage
 - **Server cache**: Subtitles are anonymous and auto-expire after 30 days. Contact us for early deletion.
-- **YourVocab account**: Delete your account at yourvocab.vercel.app/settings (if you created one)
+- **Vocaminary account**: Delete your account at app.vocaminary.com/settings (if you created one)
 
 ### Opt Out of Cloud Features
 You can disable server-side caching in the extension settings:
 1. Right-click the extension icon → **Options**
 2. Change **Subtitle Source** to "Local Server Only"
-3. This prevents any network requests to YourVocab API
+3. This prevents any network requests to Vocaminary API
 
 ## Data Security
 

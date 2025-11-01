@@ -8,7 +8,7 @@ Successfully implemented **30-day JWT tokens** to prevent frequent disconnection
 
 ## Changes Made
 
-### Backend (YourVocab API) - 3 Files Modified
+### Backend (Vocaminary API) - 3 Files Modified
 
 #### 1. `/api/auth/extension-token`
 **File:** `P:\Development\yourvocab\src\app\api\auth\extension-token\route.ts`
@@ -157,7 +157,7 @@ window.postMessage({
 ### 1. User Connects Extension (First Time)
 
 ```
-User visits https://yourvocab.vercel.app/extension-auth
+User visits https://app.vocaminary.com/extension-auth
   ↓
 Page calls /api/auth/generate-token
   ↓
@@ -252,7 +252,7 @@ If valid (>3 days):
    Load unpacked → P:\Development\YTS-1\extension
 
    # Connect to web app
-   Visit https://yourvocab.vercel.app/extension-auth
+   Visit https://app.vocaminary.com/extension-auth
    Click "Connect Extension"
    ```
 
@@ -285,7 +285,7 @@ If valid (>3 days):
      });
      ```
    - Click a word for definition
-   - Should show error: "Session expired. Please reconnect to YourVocab"
+   - Should show error: "Session expired. Please reconnect to Vocaminary"
    - Open popup → Status should show "Expired" with red dot
 
 ---
@@ -312,7 +312,7 @@ If valid (>3 days):
 
 1. **Stored securely** - chrome.storage.sync is encrypted
 2. **HTTPS only** - Tokens only sent over secure connections
-3. **Limited scope** - Tokens only work with YourVocab API
+3. **Limited scope** - Tokens only work with Vocaminary API
 4. **Automatic cleanup** - Expired tokens auto-deleted
 5. **User control** - Users can manually reconnect anytime
 
@@ -373,7 +373,7 @@ No changes needed - extension code works with any expiry duration.
 
 ## Deployment
 
-### Backend (YourVocab)
+### Backend (Vocaminary)
 
 ```bash
 cd P:\Development\yourvocab
@@ -425,10 +425,10 @@ LIMIT 100;
 
 **Extension Console (YouTube page):**
 ```
-[YourVocab] Token expires at: 12/31/2024, 11:59:59 PM
-[YourVocab] Auth saved successfully! Expires: 12/31/2024
+[Vocaminary] Token expires at: 12/31/2024, 11:59:59 PM
+[Vocaminary] Auth saved successfully! Expires: 12/31/2024
 ⚠️ Token expires in 2 days. Consider reconnecting soon.
-❌ Token expired. Please reconnect to YourVocab.
+❌ Token expired. Please reconnect to Vocaminary.
 ```
 
 **Web App Console (extension-auth page):**
@@ -447,7 +447,7 @@ LIMIT 100;
 A: Open the extension popup - it shows "Expires in Xd" when less than 3 days remain.
 
 **Q: What happens if my token expires?**
-A: You'll see "Session expired" error when clicking words. Just visit https://yourvocab.vercel.app/extension-auth to reconnect.
+A: You'll see "Session expired" error when clicking words. Just visit https://app.vocaminary.com/extension-auth to reconnect.
 
 **Q: Do I need to reconnect every day?**
 A: No! Tokens now last 30 days. You only need to reconnect once per month.

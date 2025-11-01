@@ -13,8 +13,8 @@ class SubtitleManager {
         this.logger = logger || console;
         this.storage = storage;
         this.notifications = notifications; // Unified notification service
-        this.apiBase = 'https://yourvocab.vercel.app/api';
-        this.vocabuminApi = 'https://api.vocabumin.aminophen.ir';
+        this.apiBase = 'https://app.vocaminary.com/api';
+        this.vocaminaryApi = 'https://api.vocaminary.com';
         this.ytdlpServer = 'http://localhost:5000';
         
         // Memory cache for instant access (<1ms)
@@ -345,7 +345,7 @@ class SubtitleManager {
         // Return with proper source and cached flag
         return {
             ...fetchResult,
-            source: fetchSource, // Preserve actual source (vocabumin or local-ytdlp)
+            source: fetchSource, // Preserve actual source (vocaminary or local-ytdlp)
             cached: false // This is a fresh fetch, not from cache
         };
     }
@@ -402,15 +402,15 @@ class SubtitleManager {
     }
 
     /**
-     * Fetch from Vocabumin API
+     * Fetch from Vocaminary API
      */
-    async fetchFromVocabumin(videoId) {
+    async fetchFromVocaminary(videoId) {
         const startTime = performance.now();
         
         try {
-            this.log('debug', `🚂 Vocabumin | Requesting (${videoId})`);
-            
-            const response = await fetch(`${this.vocabuminApi}/transcript/${videoId}?lang=en`, {
+            this.log('debug', `🚂 Vocaminary | Requesting (${videoId})`);
+
+            const response = await fetch(`${this.vocaminaryApi}/transcript/${videoId}?lang=en`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -421,16 +421,16 @@ class SubtitleManager {
                 const data = await response.json();
 
                 // Log the actual response structure for debugging
-                this.log('debug', `🚂 Vocabumin | Response data:`, data);
+                this.log('debug', `🚂 Vocaminary | Response data:`, data);
 
                 const snippets = data.transcript?.snippets || data.transcript;
                 const isGenerated = data.transcript?.is_generated || false;
 
                 if (data.success && snippets && snippets.length > 0) {
-                    this.log('info', `🚂 Vocabumin | Success | ${snippets.length} segments (${isGenerated ? 'auto' : 'manual'}) | ${responseTime}ms`);
+                    this.log('info', `🚂 Vocaminary | Success | ${snippets.length} segments (${isGenerated ? 'auto' : 'manual'}) | ${responseTime}ms`);
 
                     // Log successful API call
-                    this.logVocabuminAPIResponse(videoId, response.status, parseInt(responseTime), true, null);
+                    this.logVocaminaryAPIResponse(videoId, response.status, parseInt(responseTime), true, null);
 
                     const durationMultiplier = isGenerated ? 0.45 : 1.0;
 
@@ -442,7 +442,7 @@ class SubtitleManager {
                     }));
 
                     if (isGenerated) {
-                        this.log('debug', '🚂 Vocabumin | Duration reduced to 45% (auto-captions)');
+                        this.log('debug', '🚂 Vocaminary | Duration reduced to 45% (auto-captions)');
                     }
 
                     return {
@@ -451,7 +451,7 @@ class SubtitleManager {
                         captionData: {
                             language: data.language || 'en',
                             type: isGenerated ? 'auto-generated' : 'manual',
-                            source: 'vocabumin'
+                            source: 'vocaminary'
                         }
                     };
                 } else {
@@ -465,7 +465,7 @@ class SubtitleManager {
 
                     // Enhanced logging with IP block detection
                     if (errorType === 'youtube_ip_blocked') {
-                        this.log('error', `🚨 [CRITICAL] YouTube IP Block! Vocabumin | ${errorMessage} | ${responseTime}ms`);
+                        this.log('error', `🚨 [CRITICAL] YouTube IP Block! Vocaminary | ${errorMessage} | ${responseTime}ms`);
                         this.log('error', `🚨 Warp Status: ${data.warp_active ? 'Active' : 'INACTIVE - CHECK SERVER!'}`);
 
                         // Log additional details for debugging
@@ -477,10 +477,10 @@ class SubtitleManager {
                             detail: data.detail
                         });
                     } else if (isUserSideIssue) {
-                        this.log('info', `ℹ️ [User Issue] Vocabumin | ${errorMessage} | ${responseTime}ms`);
+                        this.log('info', `ℹ️ [User Issue] Vocaminary | ${errorMessage} | ${responseTime}ms`);
                     } else if (isServerIssue) {
-                        this.log('error', `❌ [Server Error] Vocabumin | ${errorMessage} | ${responseTime}ms`);
-                        this.log('debug', `🚂 Vocabumin | Failed data structure:`, {
+                        this.log('error', `❌ [Server Error] Vocaminary | ${errorMessage} | ${responseTime}ms`);
+                        this.log('debug', `🚂 Vocaminary | Failed data structure:`, {
                             success: data.success,
                             errorType: errorType,
                             errorMessage: errorMessage,
@@ -504,16 +504,16 @@ class SubtitleManager {
             }
 
             // Log failed API call
-            this.log('warn', `🚂 Vocabumin | Failed | HTTP ${response.status} | ${responseTime}ms`);
-            this.logVocabuminAPIResponse(videoId, response.status, parseInt(responseTime), false, `HTTP ${response.status}`);
+            this.log('warn', `🚂 Vocaminary | Failed | HTTP ${response.status} | ${responseTime}ms`);
+            this.logVocaminaryAPIResponse(videoId, response.status, parseInt(responseTime), false, `HTTP ${response.status}`);
             return { success: false };
             
         } catch (error) {
             const elapsed = (performance.now() - startTime).toFixed(0);
-            this.log('warn', `🚂 Vocabumin | Error | ${error.message} | ${elapsed}ms`);
-            
+            this.log('warn', `🚂 Vocaminary | Error | ${error.message} | ${elapsed}ms`);
+
             // Log network error
-            this.logVocabuminAPIResponse(videoId, 0, parseInt(elapsed), false, error.message);
+            this.logVocaminaryAPIResponse(videoId, 0, parseInt(elapsed), false, error.message);
             
             return { success: false };
         }
@@ -540,8 +540,8 @@ class SubtitleManager {
 
         // Use preferred server only (no fallback)
         if (preferredServer === 'cloud') {
-            const vocabuminResult = await this.fetchFromVocabumin(videoId);
-            return vocabuminResult;
+            const vocaminaryResult = await this.fetchFromVocaminary(videoId);
+            return vocaminaryResult;
         }
 
         // Try local yt-dlp (only when explicitly selected by user)
@@ -669,9 +669,9 @@ class SubtitleManager {
     }
 
     /**
-     * Log Vocabumin API response (placeholder)
+     * Log Vocaminary API response (placeholder)
      */
-    async logVocabuminAPIResponse(videoId, statusCode, responseTimeMs, success, errorMessage = null) {
+    async logVocaminaryAPIResponse(videoId, statusCode, responseTimeMs, success, errorMessage = null) {
         try {
             const token = await this.getAuthToken();
             if (!token) return; // Skip if no auth
@@ -692,10 +692,10 @@ class SubtitleManager {
                 })
             });
             
-            this.log('debug', `📊 Logged Vocabumin API: ${statusCode} (${responseTimeMs}ms)`);
+            this.log('debug', `📊 Logged Vocaminary API: ${statusCode} (${responseTimeMs}ms)`);
         } catch (error) {
             // Silent fail - don't break subtitle fetching if logging fails
-            this.log('warn', '⚠️ Failed to log Vocabumin API response');
+            this.log('warn', '⚠️ Failed to log Vocaminary API response');
         }
     }
 

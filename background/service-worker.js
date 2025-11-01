@@ -24,8 +24,27 @@ chrome.runtime.onInstalled.addListener((details) => {
 
         // Open onboarding page in web app
         chrome.tabs.create({
-            url: 'https://yourvocab.vercel.app/extension/onboarding'
+            url: 'https://app.vocaminary.com/extension/onboarding'
         });
+    }
+});
+
+// Handle extension icon click - toggle stats overlay on YouTube pages
+chrome.action.onClicked.addListener(async (tab) => {
+    console.log('[Background] Extension icon clicked on tab:', tab.url);
+
+    // Check if we're on a YouTube page
+    if (tab.url && tab.url.includes('youtube.com')) {
+        // Send message to content script to toggle stats overlay
+        try {
+            await chrome.tabs.sendMessage(tab.id, { action: 'toggleStatsOverlay' });
+            console.log('[Background] Stats overlay toggle message sent');
+        } catch (error) {
+            console.error('[Background] Error sending toggle message:', error);
+        }
+    } else {
+        // Not on YouTube - open the web app dashboard
+        chrome.tabs.create({ url: 'https://app.vocaminary.com' });
     }
 });
 
@@ -62,6 +81,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         return true; // Keep channel open
     }
     
+    if (request.action === 'openSettings') {
+        chrome.tabs.create({
+            url: chrome.runtime.getURL('settings/settings.html')
+        });
+        sendResponse({ success: true });
+        return true;
+    }
+
     switch (request.type) {
         case 'CAPTIONS_LOADED':
             handleCaptionsLoaded(request, sender);

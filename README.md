@@ -1,12 +1,12 @@
-# Vocabumin
+# Vocaminary
 
 > Transform your YouTube learning experience with word-perfect subtitles that sync naturally with speech
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/yourusername/vocabumin/releases)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/yourusername/vocaminary/releases)
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-green.svg)](https://www.google.com/chrome/)
 
-![Vocabumin Demo](https://via.placeholder.com/800x400?text=Demo+Screenshot+-+Replace+with+actual+screenshot)
+![Vocaminary Demo](https://via.placeholder.com/800x400?text=Demo+Screenshot+-+Replace+with+actual+screenshot)
 
 ## ✨ Features
 
@@ -25,7 +25,7 @@
 ### 🌐 Multiple Subtitle Sources
 
 - **Cloud API** (default): Shared subtitle cache for instant loading
-- **Local yt-dlp server**: Extract subtitles on your own machine ([see server repo](https://github.com/yourusername/vocabumin-subtitle-server))
+- **Local yt-dlp server**: Extract subtitles on your own machine ([see server repo](https://github.com/yourusername/vocaminary-subtitle-server))
 - Automatic fallback if one source fails
 
 ### 🔐 Privacy-Focused
@@ -49,8 +49,8 @@
 1. **Clone this repository**
 
    ```bash
-   git clone https://github.com/yourusername/vocabumin.git
-   cd vocabumin
+   git clone https://github.com/yourusername/vocaminary.git
+   cd vocaminary
    ```
 
 2. **Load the extension in Chrome**
@@ -58,13 +58,13 @@
    - Open Chrome and go to `chrome://extensions/`
    - Enable "Developer mode" (toggle in top-right)
    - Click "Load unpacked"
-   - Select the cloned `vocabumin` folder
+   - Select the cloned `vocaminary` folder
 
 3. **Optional: Set up the local subtitle server**
 
    For privacy and better control, you can run your own subtitle extraction server:
 
-   - Visit the [vocabumin-subtitle-server repository](https://github.com/yourusername/vocabumin-subtitle-server)
+   - Visit the [vocaminary-subtitle-server repository](https://github.com/yourusername/vocaminary-subtitle-server)
    - Follow the setup instructions there
    - Configure the extension to use your local server in Settings
 
@@ -101,7 +101,7 @@
 | **Extension** | Vanilla JavaScript (no frameworks) |
 | **Manifest**  | Chrome Manifest V3                 |
 | **Storage**   | Chrome Storage API + IndexedDB     |
-| **Backend**   | Cloud API or [Local Server](https://github.com/yourusername/vocabumin-subtitle-server) |
+| **Backend**   | Cloud API or [Local Server](https://github.com/yourusername/vocaminary-subtitle-server) |
 
 ### Architecture Highlights
 
@@ -136,8 +136,8 @@
 
 We welcome contributions! Here's how you can help:
 
-- 🐛 **Report bugs** - [Open an issue](https://github.com/yourusername/vocabumin/issues/new?template=bug_report.md)
-- 💡 **Suggest features** - [Request a feature](https://github.com/yourusername/vocabumin/issues/new?template=feature_request.md)
+- 🐛 **Report bugs** - [Open an issue](https://github.com/yourusername/vocaminary/issues/new?template=bug_report.md)
+- 💡 **Suggest features** - [Request a feature](https://github.com/yourusername/vocaminary/issues/new?template=feature_request.md)
 - 🔧 **Submit pull requests** - See our [Contributing Guide](CONTRIBUTING.md)
 - 📖 **Improve documentation** - Help make our docs clearer
 - 🌐 **Translate** - Add support for more languages
@@ -148,7 +148,7 @@ We welcome contributions! Here's how you can help:
 - YouTube DOM changes may require extension updates
 - Rate limiting: Aggressive usage may trigger YouTube blocks (we implement safeguards)
 
-[See all issues →](https://github.com/yourusername/vocabumin/issues)
+[See all issues →](https://github.com/yourusername/vocaminary/issues)
 
 ## 📋 Requirements
 
@@ -172,7 +172,7 @@ We welcome contributions! Here's how you can help:
 ### Extension not loading
 
 1. Go to `chrome://extensions/`
-2. Find "Vocabumin"
+2. Find "Vocaminary"
 3. Make sure the toggle is ON
 4. Click the reload icon ↻
 
@@ -184,7 +184,7 @@ We welcome contributions! Here's how you can help:
 
 - [x] Core subtitle overlay functionality
 - [x] Multi-layer caching system
-- [x] Local server support ([separate repository](https://github.com/yourusername/vocabumin-subtitle-server))
+- [x] Local server support ([separate repository](https://github.com/yourusername/vocaminary-subtitle-server))
 - [x] Cloud API integration
 - [ ] Word-click definitions (in development)
 - [ ] Chrome Web Store publication (planned)
@@ -196,18 +196,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** - Subtitle extraction (used in [subtitle server](https://github.com/yourusername/vocabumin-subtitle-server))
+- **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** - Subtitle extraction (used in [subtitle server](https://github.com/yourusername/vocaminary-subtitle-server))
 - **YouTube** - For providing subtitle data
 - **The open-source community** - For inspiration and tools
 
 ## 📞 Contact & Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/vocabumin/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/vocabumin/discussions)
+- **Issues**: [GitHub Issues](https://github.com/yourusername/vocaminary/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/vocaminary/discussions)
 
 ## 🔗 Related Projects
 
-- **[vocabumin-subtitle-server](https://github.com/yourusername/vocabumin-subtitle-server)** - Local subtitle extraction server (optional)
+- **[vocaminary-subtitle-server](https://github.com/yourusername/vocaminary-subtitle-server)** - Local subtitle extraction server (optional)
 
 ## ⭐ Show Your Support
 

@@ -29,7 +29,8 @@ class YouTubeSubtitleOverlay {
         // 5. UI components last (they need everything else)
         this.player = new PlayerIntegration(this, this.logger);
         this.tooltip = new Tooltip(this);
-        
+        this.statsOverlay = new StatsOverlay(this);
+
         // 6. Setup and init
         this.setupEventHandlers();
         this.init();
@@ -48,7 +49,7 @@ class YouTubeSubtitleOverlay {
                 vocabUserId: data.userId,
                 vocabEmail: data.email
             });
-            alert('✅ Extension connected to YourVocab!');
+            alert('✅ Extension connected to Vocaminary!');
             window.close();
         });
 

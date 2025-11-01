@@ -325,7 +325,7 @@ class SettingsManager {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `yourvocab_export_${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `vocaminary_export_${new Date().toISOString().split('T')[0]}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -357,12 +357,12 @@ class SettingsManager {
             if (!vocabToken) {
                 this.videosLoading.style.display = 'none';
                 this.videosError.style.display = 'flex';
-                this.videosErrorText.textContent = 'Not connected to YourVocab. Please connect first.';
+                this.videosErrorText.textContent = 'Not connected to Vocaminary. Please connect first.';
                 return;
             }
 
             // Fetch user's video watch history from API
-            const response = await fetch('https://yourvocab.vercel.app/api/my-videos', {
+            const response = await fetch('https://app.vocaminary.com/api/my-videos', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${vocabToken}`,

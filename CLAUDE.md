@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Vocabumin** - A Chrome Manifest V3 extension that overlays YouTube subtitles with word-level precision and AI-powered definitions. Designed for language learners to study vocabulary while watching videos.
+**Vocaminary** - A Chrome Manifest V3 extension that overlays YouTube subtitles with word-level precision and AI-powered definitions. Designed for language learners to study vocabulary while watching videos.
 
 **Tech Stack:**
 - Vanilla JavaScript (no build step, no frameworks)
 - Chrome Extension Manifest V3
 - Chrome Storage API + IndexedDB for caching
 - OpenAI API for word analysis (user-provided or public shared key)
-- Cloud subtitle API: api.vocabumin.aminophen.ir
+- Cloud subtitle API: api.vocaminary.com
 - Optional local Python yt-dlp server for privacy
 
 ## Development Commands
@@ -147,7 +147,7 @@ Custom pub/sub system that also handles Chrome extension messages.
 - `leftYouTube` - User left YouTube entirely
 - `videoPlay` - Video resumed playback
 - `playButtonClicked` - Player play button clicked
-- `vocabAuth` - YourVocab authentication received
+- `vocabAuth` - Vocaminary authentication received
 - `chromeMessage` - Chrome extension message received
 
 **Usage:**
@@ -194,14 +194,14 @@ Layer 4: Rate Limit Check
   - Prevents YouTube API abuse
   ↓ (allowed)
 Layer 5: Fresh Fetch
-  - Vocabumin API: 2-3s
+  - Vocaminary API: 2-3s
   - Local yt-dlp: 3-5s
   ↓
 Store in all layers for next time
 ```
 
 **Two subtitle sources:**
-1. **Vocabumin API** (default): `https://api.vocabumin.aminophen.ir/transcript/{videoId}`
+1. **Vocaminary API** (default): `https://api.vocaminary.com/transcript/{videoId}`
    - Cloud-based, shared cache
    - Faster for popular videos
    - No local setup required
@@ -223,7 +223,7 @@ Two modes for OpenAI API access:
 - More privacy, direct OpenAI connection
 
 **"public" mode:**
-- Uses shared public API key managed by Vocabumin
+- Uses shared public API key managed by Vocaminary
 - 50 free lookups/day across all users
 - No API key setup required
 - Good for trying the extension
@@ -287,7 +287,7 @@ window.overlay = overlay;  // For cleanup access
   ],
   captionData: {
     language: "en",
-    source: "vocabumin" | "local-ytdlp" | "server_cache",
+    source: "vocaminary" | "local-ytdlp" | "server_cache",
     type: "auto-generated" | "manual",
     cached: true | false,
     cacheAge: 1234567  // milliseconds
@@ -315,7 +315,7 @@ window.overlay = overlay;  // For cleanup access
 ## File Organization
 
 ```
-vocabumin/
+vocaminary/
 ├── manifest.json                      # Extension config (Manifest V3)
 ├── background/
 │   └── service-worker.js              # Background script (lifecycle management)
@@ -330,7 +330,7 @@ vocabumin/
 │   │   ├── SubtitleManager.js         # Multi-layer subtitle caching
 │   │   ├── CaptionService.js          # Subtitle fetching (Caption class)
 │   │   ├── APIService.js              # OpenAI integration (AIService class)
-│   │   ├── AuthHandler.js             # YourVocab authentication
+│   │   ├── AuthHandler.js             # Vocaminary authentication
 │   │   └── jwt-token-manager.js       # JWT token handling
 │   ├── youtube/                       # YouTube-specific code
 │   │   ├── DOMWatcher.js              # Monitors YouTube DOM changes
@@ -427,9 +427,9 @@ eventBus.on('myCustomEvent', (data) => {
 
 ### Testing Subtitle Fetching
 
-Test Vocabumin API directly:
+Test Vocaminary API directly:
 ```bash
-curl https://api.vocabumin.aminophen.ir/transcript/dQw4w9WgXcQ
+curl https://api.vocaminary.com/transcript/dQw4w9WgXcQ
 ```
 
 Test local yt-dlp server:
@@ -491,7 +491,7 @@ stateManager.setActive(true);
 
 - **Memory cache:** Last 3 videos only (cleared on page unload)
 - **IndexedDB:** 7 days (auto-cleanup via timestamp check)
-- **Server cache:** 30 days (managed by Vocabumin API)
+- **Server cache:** 30 days (managed by Vocaminary API)
 - **Python server:** 1 hour (configurable in yt-dlp-server.py)
 
 ### Extension Popup vs Settings Page
@@ -620,9 +620,9 @@ console.log({
 
 ## API Integration
 
-### Vocabumin Cloud API
+### Vocaminary Cloud API
 
-Base URL: `https://api.vocabumin.aminophen.ir`
+Base URL: `https://api.vocaminary.com`
 
 **Endpoints:**
 - `GET /transcript/{videoId}` - Fetch subtitles (with caching)
@@ -630,15 +630,15 @@ Base URL: `https://api.vocabumin.aminophen.ir`
 
 Authentication: None required (public API)
 
-### YourVocab Cloud API
+### Vocaminary Cloud API
 
-Base URL: `https://yourvocab.vercel.app/api`
+Base URL: `https://app.vocaminary.com/api`
 
 **Endpoints:**
 - `POST /subtitles/fetch-or-cache` - Check server cache for subtitles
 - `POST /subtitles/store-cache` - Store subtitles for sharing
 - `POST /subtitles/log-fetch` - Analytics logging
-- `POST /railway-health/log` - Vocabumin API health monitoring
+- `POST /railway-health/log` - Vocaminary API health monitoring
 
 Authentication: Bearer token from `chrome.storage.sync.vocabToken`
 
@@ -667,8 +667,8 @@ Used for word definitions. Two modes:
 
 **Public API mode:**
 ```javascript
-// Shared key managed by Vocabumin
-// API calls proxied through Vocabumin backend
+// Shared key managed by Vocaminary
+// API calls proxied through Vocaminary backend
 // 50 calls/day limit across all users
 ```
 
@@ -696,7 +696,7 @@ pip install yt-dlp flask flask-cors
 
 **Solutions:**
 1. Refresh page (F5)
-2. Check `chrome://extensions/` - ensure Vocabumin is enabled
+2. Check `chrome://extensions/` - ensure Vocaminary is enabled
 3. Open DevTools Console - look for red errors
 4. Check DOMWatcher: `overlay.domWatcher.setupPlayerButton()`
 5. Verify YouTube layout hasn't changed (check `.ytp-left-controls` selector)
@@ -782,7 +782,7 @@ console.log({
 
 ```bash
 # Create ZIP for Chrome Web Store
-zip -r vocabumin-v0.1.0.zip . \
+zip -r vocaminary-v0.1.0.zip . \
   -x "*.git*" -x "*.history*" -x "docs/*" -x "*.md"
 ```
 
@@ -790,7 +790,7 @@ zip -r vocabumin-v0.1.0.zip . \
 
 Extension uses `update_url` in manifest.json:
 ```json
-"update_url": "https://vocabumin.aminophen.ir/extension/updates.xml"
+"update_url": "https://vocaminary.aminophen.ir/extension/updates.xml"
 ```
 
 Chrome checks this URL periodically for new versions. When detected, auto-updates extension.

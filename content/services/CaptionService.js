@@ -81,7 +81,7 @@ class Caption {
             return false;
         }
 
-        // Handle structured errors from Vocabumin API
+        // Handle structured errors from Vocaminary API
         if (result.success === false && result.errorType) {
             const { errorType, errorMessage, isUserSideIssue, isServerIssue, warpActive } = result;
 
@@ -139,9 +139,9 @@ class Caption {
             return false;
         }
 
-        // Apply segmentation if needed (but skip for Vocabumin - they have good timing already)
-        const skipSegmentation = result.captionData?.type === 'manual' || 
-                                result.captionData?.source === 'vocabumin';
+        // Apply segmentation if needed (but skip for Vocaminary - they have good timing already)
+        const skipSegmentation = result.captionData?.type === 'manual' ||
+                                result.captionData?.source === 'vocaminary';
         
         if (result.captionData && !skipSegmentation) {
             processedCaptions = this.applyUltraStrictSegmentation(processedCaptions);
@@ -169,13 +169,13 @@ class Caption {
             } else if (result.source === 'server_cache') {
                 this.notifications.showCacheStatus('server_cache');
             } else {
-                // Cached but from vocabumin or local-ytdlp (first fetch, now cached)
+                // Cached but from vocaminary or local-ytdlp (first fetch, now cached)
                 this.notifications.showCacheStatus(result.source);
             }
         } else {
             // Fresh fetch - show the actual source
-            if (result.source === 'vocabumin') {
-                this.notifications.showCacheStatus('vocabumin');
+            if (result.source === 'vocaminary') {
+                this.notifications.showCacheStatus('vocaminary');
             } else if (result.source === 'local-ytdlp') {
                 this.notifications.showCacheStatus('local-ytdlp');
             } else {

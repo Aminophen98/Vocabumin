@@ -118,7 +118,7 @@ Once icons are created, your manifest.json should include:
 
   "action": {
     "default_popup": "popup/popup-simple.html",
-    "default_title": "YourVocab - YouTube Learning Assistant",
+    "default_title": "Vocaminary - YouTube Learning Assistant",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png"

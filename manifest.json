@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Vocabumin",
-  "update_url": "https://vocabumin.aminophen.ir/extension/updates.xml",
+  "name": "Vocaminary",
+  "update_url": "https://vocaminary.com/extension/updates.xml",
   "version": "0.1.0",
   "description": "Transform YouTube learning with word-perfect subtitles that sync naturally with speech. Perfect for language learners.",
   "author": "Aminophen",
-  "homepage_url": "https://github.com/Aminophen98/Vocabumin",
+  "homepage_url": "https://vocaminary.com",
 
   "permissions": [
     "activeTab",
@@ -16,8 +16,8 @@
 
   "host_permissions": [
     "https://www.youtube.com/*",
-    "https://yourvocab.vercel.app/*",
-    "https://api.vocabumin.aminophen.ir/*",
+    "https://app.vocaminary.com/*",
+    "https://api.vocaminary.com/*",
     "http://localhost:5000/*",
     "http://localhost:3000/*"
   ],
@@ -42,6 +42,7 @@
         "content/ui/OverlayUI.js",
         "content/services/CaptionService.js",
         "content/ui/WordTooltip.js",
+        "content/ui/StatsOverlay.js",
         "content/services/APIService.js",
         "content/content-script.js"
       ],
@@ -49,7 +50,7 @@
     },
     {
       "matches": [
-        "https://yourvocab.vercel.app/*",
+        "https://app.vocaminary.com/*",
         "http://localhost:3000/*"
       ],
       "js": ["js/auth-bridge.js"]
@@ -57,8 +58,7 @@
   ],
   
   "action": {
-    "default_popup": "popup/popup-simple.html",
-    "default_title": "Vocabumin"
+    "default_title": "Vocaminary - Click to view stats"
   },
 
   "icons": {

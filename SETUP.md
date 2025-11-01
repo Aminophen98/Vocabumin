@@ -1,6 +1,6 @@
-# Vocabumin Setup Guide
+# Vocaminary Setup Guide
 
-Complete installation instructions for the Vocabumin Chrome extension.
+Complete installation instructions for the Vocaminary Chrome extension.
 
 ## Table of Contents
 
@@ -31,14 +31,14 @@ Best for: Testing, development, or if you want full control
 
 **Option A: Clone with Git**
 ```bash
-git clone https://github.com/yourusername/vocabumin.git
-cd vocabumin
+git clone https://github.com/yourusername/vocaminary.git
+cd vocaminary
 ```
 
 **Option B: Download ZIP**
-1. Go to https://github.com/yourusername/vocabumin
+1. Go to https://github.com/yourusername/vocaminary
 2. Click **Code** → **Download ZIP**
-3. Extract the ZIP file to a permanent location (e.g., `C:\Extensions\vocabumin` or `~/Extensions/vocabumin`)
+3. Extract the ZIP file to a permanent location (e.g., `C:\Extensions\vocaminary` or `~/Extensions/vocaminary`)
 
 ⚠️ **Important**: Don't delete this folder after installation! The extension loads from it.
 
@@ -47,7 +47,7 @@ cd vocabumin
 1. Open Chrome and navigate to `chrome://extensions/`
 2. Enable **Developer mode** (toggle switch in top-right corner)
 3. Click **"Load unpacked"** button
-4. Select the `vocabumin` folder
+4. Select the `vocaminary` folder
 5. The extension icon should appear in your toolbar
 
 #### Step 3: Verify Installation
@@ -76,7 +76,7 @@ cd vocabumin
 #### Subtitle Source
 - **Cloud API (Default)**: Uses shared subtitle cache for instant loading
 - **Local Server**: Uses your own subtitle extraction server
-  - Requires separate setup: [vocabumin-subtitle-server](https://github.com/yourusername/vocabumin-subtitle-server)
+  - Requires separate setup: [vocaminary-subtitle-server](https://github.com/yourusername/vocaminary-subtitle-server)
 
 #### API Mode
 - **Public API**: Free, shared rate limits
@@ -110,7 +110,7 @@ The extension comes pre-configured to use a shared cloud API that provides:
 
 For maximum privacy and control, you can run your own subtitle extraction server.
 
-**Setup instructions**: Visit the [vocabumin-subtitle-server repository](https://github.com/yourusername/vocabumin-subtitle-server)
+**Setup instructions**: Visit the [vocaminary-subtitle-server repository](https://github.com/yourusername/vocaminary-subtitle-server)
 
 **Pros:**
 - ✅ Full privacy - no data leaves your computer
@@ -141,7 +141,7 @@ Once you have the local server running:
 1. **Refresh the page** (F5)
 2. **Check if extension is enabled**:
    - Go to `chrome://extensions/`
-   - Find "Vocabumin"
+   - Find "Vocaminary"
    - Make sure the toggle is ON
 3. **Check for errors**:
    - Open DevTools (F12)
@@ -199,7 +199,7 @@ Once you have the local server running:
 3. **Report the issue**:
    - Note the video ID
    - Check DevTools console for errors
-   - [Open an issue](https://github.com/yourusername/vocabumin/issues)
+   - [Open an issue](https://github.com/yourusername/vocaminary/issues)
 
 ---
 
@@ -237,7 +237,7 @@ Once you have the local server running:
 ### Remove Extension
 
 1. Go to `chrome://extensions/`
-2. Find "Vocabumin"
+2. Find "Vocaminary"
 3. Click **Remove**
 4. Confirm deletion
 
@@ -279,7 +279,7 @@ Enable verbose logging:
 
 Still having issues?
 
-1. **Check existing issues**: https://github.com/yourusername/vocabumin/issues
+1. **Check existing issues**: https://github.com/yourusername/vocaminary/issues
 2. **Open a new issue**: Include:
    - Your OS and Chrome version
    - Error messages from DevTools console
@@ -294,5 +294,5 @@ Still having issues?
 
 - ✅ Extension installed → [Read the documentation](docs/CLAUDE.md)
 - ✅ Want to contribute? → [See Contributing Guide](CONTRIBUTING.md)
-- ✅ Found a bug? → [Report it](https://github.com/yourusername/vocabumin/issues/new?template=bug_report.md)
-- ✅ Need local server? → [Set up vocabumin-subtitle-server](https://github.com/yourusername/vocabumin-subtitle-server)
+- ✅ Found a bug? → [Report it](https://github.com/yourusername/vocaminary/issues/new?template=bug_report.md)
+- ✅ Need local server? → [Set up vocaminary-subtitle-server](https://github.com/yourusername/vocaminary-subtitle-server)

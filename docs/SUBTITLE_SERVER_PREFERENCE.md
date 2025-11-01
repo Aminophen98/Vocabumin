@@ -2,14 +2,14 @@
 
 ## ✨ What Was Added
 
-A new setting that lets users choose between Cloud (Vocabumin) or Local (yt-dlp) subtitle servers.
+A new setting that lets users choose between Cloud (Vocaminary) or Local (yt-dlp) subtitle servers.
 
 ## 📍 Changes Made
 
 ### 1. Settings Page (settings/settings.html)
 
 - Added new "Subtitle Server" section with two options:
-  - 🚂 **Cloud Server (Recommended)** - Vocabumin API, no setup required
+  - 🚂 **Cloud Server (Recommended)** - Vocaminary API, no setup required
   - 💻 **Local Server** - Uses local yt-dlp server on port 5000
 
 ### 2. Settings Manager (settings/settings.js)
@@ -23,10 +23,10 @@ A new setting that lets users choose between Cloud (Vocabumin) or Local (yt-dlp)
 
 - Checks user's `subtitleServer` preference before fetching
 - **Cloud mode (default):**
-  - Tries Vocabumin API first
-  - Falls back to local yt-dlp if Vocabumin fails
+  - Tries Vocaminary API first
+  - Falls back to local yt-dlp if Vocaminary fails
 - **Local mode:**
-  - Skips Vocabumin entirely
+  - Skips Vocaminary entirely
   - Goes straight to local yt-dlp server
 - Added visual indicator: 💻 "Local Server" (orange background)
 
@@ -34,16 +34,16 @@ A new setting that lets users choose between Cloud (Vocabumin) or Local (yt-dlp)
 
 ### Default Behavior
 
-- **New users:** Cloud server (Vocabumin) by default
-- **Existing users:** Cloud server (Vocabumin) by default
+- **New users:** Cloud server (Vocaminary) by default
+- **Existing users:** Cloud server (Vocaminary) by default
 - **Easy switching:** Just click the radio button in settings
 
 ### Visual Indicators
 
-- 🚂 Vocabumin API (green) - Cloud server
+- 🚂 Vocaminary API (green) - Cloud server
 - 💻 Local Server (orange) - Local yt-dlp
 - ⚡ Cached - From browser cache
-- ☁️ Server cache - From YourVocab cache
+- ☁️ Server cache - From Vocaminary cache
 
 ## 🔐 Future: Premium Feature
 

@@ -269,8 +269,8 @@ class NotificationService {
                 text = '☁️ Server cache';
                 bgColor = 'rgba(139, 92, 246, 0.9)'; // Purple
                 break;
-            case 'vocabumin':
-                text = '🌐 Vocabumin API';
+            case 'vocaminary':
+                text = '🌐 Vocaminary API';
                 bgColor = 'rgba(59, 130, 246, 0.9)'; // Blue
                 break;
             case 'local-ytdlp':

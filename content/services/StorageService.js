@@ -104,7 +104,7 @@ class StorageManagement {
             
             if (vocabToken) {
                 try {
-                    const apiUrl = 'https://yourvocab.vercel.app/api/words';
+                    const apiUrl = 'https://app.vocaminary.com/api/words';
                     
                     const response = await fetch(apiUrl, {
                         method: 'GET',
@@ -198,7 +198,7 @@ class StorageManagement {
                 return;
             }
             
-            const apiUrl = 'https://yourvocab.vercel.app/api/words';
+            const apiUrl = 'https://app.vocaminary.com/api/words';
             
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -279,7 +279,7 @@ class StorageManagement {
                 return true;
             }
             
-            const apiUrl = `https://yourvocab.vercel.app/api/words?word=${encodeURIComponent(word)}`;
+            const apiUrl = `https://app.vocaminary.com/api/words?word=${encodeURIComponent(word)}`;
             
             const response = await fetch(apiUrl, {
                 method: 'DELETE',
@@ -362,7 +362,7 @@ class StorageManagement {
                 return;
             }
 
-            const response = await fetch('https://yourvocab.vercel.app/api/words', {
+            const response = await fetch('https://app.vocaminary.com/api/words', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${authToken}`,

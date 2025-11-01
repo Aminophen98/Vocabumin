@@ -10,7 +10,7 @@ YouTube Subtitle Overlay - A Chrome Manifest V3 extension that overlays YouTube 
 - Vanilla JavaScript (no frameworks)
 - Chrome Extension Manifest V3
 - Python Flask server (optional local subtitle extraction)
-- Cloud API: yourvocab.vercel.app
+- Cloud API: app.vocaminary.com
 - Chrome Storage API + IndexedDB
 
 ## Development Commands
@@ -105,13 +105,13 @@ User enables overlay
   ↓ (miss)
 4. Rate Limit Check          → Block if exceeded
   ↓ (allowed)
-5. Fetch from Source         → 2-5s from Vocabumin API or local yt-dlp
+5. Fetch from Source         → 2-5s from Vocaminary API or local yt-dlp
   ↓
 6. Store in all caches       → Instant next time
 ```
 
 **Two subtitle sources:**
-1. **Vocabumin API** (Cloud, default): `https://api.vocabumin.aminophen.ir/transcript/{videoId}`
+1. **Vocaminary API** (Cloud, default): `https://api.vocaminary.com/transcript/{videoId}`
 2. **Local yt-dlp** (User configurable): `http://localhost:5000/extract-subs-json3`
 
 ### Key Data Structures
@@ -132,7 +132,7 @@ User enables overlay
   ],
   captionData: {
     language: "en",
-    source: "vocabumin" | "local-ytdlp" | "server_cache",
+    source: "vocaminary" | "local-ytdlp" | "server_cache",
     type: "auto-generated" | "manual"
   }
 }
@@ -188,7 +188,7 @@ setInterval(() => {
 ### 4. Error Handling
 - All fetch operations have try/catch with user-friendly error messages
 - Errors logged to console AND persisted to Chrome storage
-- Graceful fallbacks: Vocabumin fails → try local yt-dlp → show error
+- Graceful fallbacks: Vocaminary fails → try local yt-dlp → show error
 
 ### 5. Rate Limiting
 - Client-side: Track requests per video ID, enforce delays
@@ -319,14 +319,14 @@ Configuration:
 
 ## API Integration
 
-### YourVocab Cloud API
+### Vocaminary Cloud API
 Authentication via Bearer token from `chrome.storage.sync.vocabToken`
 
 Endpoints:
 - `POST /api/subtitles/fetch-or-cache` - Check server cache
 - `POST /api/subtitles/store-cache` - Store for sharing
 - `POST /api/subtitles/log-fetch` - Analytics
-- `POST /api/railway-health/log` - Vocabumin API health monitoring (legacy endpoint name)
+- `POST /api/railway-health/log` - Vocaminary API health monitoring (legacy endpoint name)
 
 ### Local Server
 No authentication required (localhost only)

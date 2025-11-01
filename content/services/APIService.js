@@ -139,15 +139,15 @@ class AIService {
             let response;
     
     if (apiMode === 'public') {
-        // Use YourVocab public API
+        // Use Vocaminary public API
         const { vocabToken, vocabTokenExpiry } = await chrome.storage.sync.get(['vocabToken', 'vocabTokenExpiry']);
 
         if (!vocabToken) {
-            this.logger.error('Public API requires login to YourVocab');
+            this.logger.error('Public API requires login to Vocaminary');
             return {
                 pronunciation: '/login-required/',
                 partOfSpeech: 'error',
-                definition: 'Please connect to YourVocab to use the public API',
+                definition: 'Please connect to Vocaminary to use the public API',
                 synonyms: ['Login', 'Required'],
                 translations: {},
                 frequency: 'error',
@@ -158,14 +158,14 @@ class AIService {
 
         // Check token expiry
         if (vocabTokenExpiry && Date.now() >= vocabTokenExpiry) {
-            this.logger.warn('Token expired. Please reconnect to YourVocab.');
+            this.logger.warn('Token expired. Please reconnect to Vocaminary.');
             // Clear expired token
             await chrome.storage.sync.remove(['vocabToken', 'vocabUserId', 'vocabEmail', 'vocabTokenExpiry']);
 
             return {
                 pronunciation: '/session-expired/',
                 partOfSpeech: 'error',
-                definition: 'Session expired. Please reconnect to YourVocab at https://yourvocab.vercel.app/extension-auth',
+                definition: 'Session expired. Please reconnect to Vocaminary at https://app.vocaminary.com/extension-auth',
                 synonyms: ['Session', 'Expired'],
                 translations: {},
                 frequency: 'error',
@@ -189,7 +189,7 @@ class AIService {
             return {
                 pronunciation: '/session-expired/',
                 partOfSpeech: 'error',
-                definition: 'Session expired. Please reconnect to YourVocab.',
+                definition: 'Session expired. Please reconnect to Vocaminary.',
                 synonyms: ['Session', 'Expired'],
                 translations: {},
                 frequency: 'error',
@@ -198,7 +198,7 @@ class AIService {
             };
         }
 
-        response = await fetch('https://yourvocab.vercel.app/api/analyze', {
+        response = await fetch('https://app.vocaminary.com/api/analyze', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -376,7 +376,7 @@ class AIService {
     async validateToken(token) {
         try {
             // Quick validation against your API
-            const response = await fetch('https://yourvocab.vercel.app/api/words', {
+            const response = await fetch('https://app.vocaminary.com/api/words', {
                 method: 'HEAD',  // Use HEAD for lightweight check
                 headers: {
                     'Authorization': `Bearer ${token}`
