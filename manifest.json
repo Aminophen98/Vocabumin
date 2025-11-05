@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Vocaminary",
   "update_url": "https://cdn.vocaminary.com/extension/updates.xml",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Transform YouTube learning with word-perfect subtitles that sync naturally with speech. Perfect for language learners.",
   "author": "Aminophen",
   "homepage_url": "https://vocaminary.com",

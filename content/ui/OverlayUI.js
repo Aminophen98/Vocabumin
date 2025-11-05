@@ -409,10 +409,10 @@ class PlayerIntegration {
                 #yt-subtitle-overlay-btn {
                     position: absolute !important;
                     top: 12px;
-                    right: 12px;
+                    left: 12px;
                     width: 40px !important;
                     height: 40px !important;
-                    background: rgba(28, 28, 28, 0.9) !important;
+                    background: rgba(0, 0, 0, 0.2); !important;
                     border: none;
                     border-radius: 50% !important;
                     display: flex !important;
@@ -434,8 +434,7 @@ class PlayerIntegration {
                 }
 
                 #yt-subtitle-overlay-btn:hover {
-                    background: rgba(255, 255, 255, 0.2) !important;
-                    transform: scale(1.1);
+                    background: rgba(255, 0, 0, 0.2) !important;
                 }
 
                 #yt-subtitle-overlay-btn:active {
@@ -443,16 +442,17 @@ class PlayerIntegration {
                 }
 
                 #yt-subtitle-overlay-btn.active {
-                    background: rgba(255, 0, 0, 0.9) !important;
+                    background: rgba(255, 0, 0, 0.2) !important;
                 }
 
                 #yt-subtitle-overlay-btn.active:hover {
-                    background: rgba(255, 0, 0, 1) !important;
+                    background: rgba(255, 0, 0, 0.5) !important;
                 }
 
                 #yt-subtitle-overlay-btn svg {
                     width: 20px;
                     height: 20px;
+                    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3));
                 }
 
                 /* Tooltip */
@@ -460,12 +460,13 @@ class PlayerIntegration {
                     content: attr(data-tooltip);
                     position: absolute;
                     top: 50%;
-                    right: calc(100% + 8px);
+                    left: calc(100% + 8px);
                     transform: translateY(-50%);
-                    background: rgba(28, 28, 28, 0.9);
+                    background: rgba(0, 0, 0, 0.2);
+                    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3));
                     color: #fff;
                     padding: 5px 8px;
-                    border-radius: 2px;
+                    border-radius: 3px;
                     font-size: 12px;
                     font-family: "Roboto", Arial, sans-serif;
                     font-weight: 500;
